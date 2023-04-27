@@ -25,7 +25,7 @@ bot.on(message('text'), async (ctx) => {
     ctx.session ??= INITIAL_SESSION
     try {
         await ctx.reply(code("Text accepted for processing"))
-        const userId = String(ctx.message.from.id)
+        //const userId = String(ctx.message.from.id)
         const text = ctx.message.text
 
         ctx.session.messages.push({
@@ -40,16 +40,14 @@ bot.on(message('text'), async (ctx) => {
         })
         await ctx.reply(response.content)
 
-        // Delete the penultimate message
-        const chatId = ctx.update.message.chat.id
-        const messageId = ctx.update.message.message_id + 1
-        bot.telegram.deleteMessage(chatId, messageId)
+        bot.telegram.deleteMessage(ctx.update.message.chat.id, ctx.update.message.message_id + 1)
+        
 
     } catch(error) {
         await ctx.reply("Sorry, no response received from the server")
+        bot.telegram.deleteMessage(ctx.update.message.chat.id, ctx.update.message.message_id + 1)
     }
 })
-
 
 bot.launch()
 
