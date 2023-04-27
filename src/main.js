@@ -21,6 +21,7 @@ bot.command('new', async (ctx) => {
     ctx.session = INITIAL_SESSION
     await ctx.reply('You have started a new dialogue with the bot. 🤖\nGood luck with your use!')
 })
+
 bot.on(message('text'), async (ctx) => {
     ctx.session ??= INITIAL_SESSION
     try {
