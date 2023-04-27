@@ -39,6 +39,12 @@ bot.on(message('text'), async (ctx) => {
             content: response.content
         })
         await ctx.reply(response.content)
+
+        // Delete the penultimate message
+        const chatId = ctx.update.message.chat.id
+        const messageId = ctx.update.message.message_id + 1
+        bot.telegram.deleteMessage(chatId, messageId)
+
     } catch(error) {
         await ctx.reply("Sorry, no response received from the server")
     }
