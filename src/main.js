@@ -22,10 +22,12 @@ bot.command('new', async (ctx) => {
     await ctx.reply('You have started a new dialogue with the bot. 🤖\nGood luck with your use!')
 })
 bot.on(message('text'), async (ctx) => {
+    ctx.session ??= INITIAL_SESSION
     try {
         await ctx.reply(code("Text accepted for processing"))
         const userId = String(ctx.message.from.id)
         const text = ctx.message.text
+
         ctx.session.messages.push({
             role: openai.roles.USER,
             content: text
@@ -38,7 +40,7 @@ bot.on(message('text'), async (ctx) => {
         })
         await ctx.reply(response.content)
     } catch(error) {
-        await ctx.reply("You need to create a new session: /new\nIf that doesn't help, just wait a bit! 🔧")
+        await ctx.reply("Sorry, no response received from the server")
     }
 })
 

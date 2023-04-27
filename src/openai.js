@@ -23,6 +23,7 @@ class OpenAI {
             })
 
             return response.data.choices[0].message
+            
         } catch (error) {
             console.log('Error getting response')
         }
