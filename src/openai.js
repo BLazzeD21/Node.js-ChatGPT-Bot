@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from "openai"
 import config from 'config'
+import { createReadStream } from 'fs'
 
 class OpenAI {
     roles = {
@@ -25,7 +26,19 @@ class OpenAI {
             return response.data.choices[0].message
             
         } catch (error) {
-            console.log('Error getting response:' + error)
+            console.log('Error getting response ' + error.message)
+        }
+    }
+
+    async transcription(filepath) {
+        try {
+            const response = await this.openai.createTranscription(
+                createReadStream(filepath),
+                'whisper-1'
+            )
+        return response.data.text
+        } catch (error) {
+            console.log('Error transcription ' + error.message)
         }
     }
 }
