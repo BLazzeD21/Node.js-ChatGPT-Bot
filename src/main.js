@@ -1,5 +1,6 @@
 import { Telegraf, session } from 'telegraf'
 import { message } from 'telegraf/filters'
+import { code } from 'telegraf/format'
 
 import config from 'config'
 import { openai } from './openai.js'
@@ -37,6 +38,7 @@ bot.on(message('text'), async (ctx) => {
   const sessionId = ctx.message.chat.id;
   sessions[sessionId] ??= createInitialSession();
   try {
+    await ctx.reply(code("Text accepted for processing"))
     const text = ctx.message.text
     sessions[sessionId].messages.push({
       role: openai.roles.USER,
