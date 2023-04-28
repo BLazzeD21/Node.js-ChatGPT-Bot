@@ -36,7 +36,6 @@ bot.command('new', async (ctx) => {
 bot.on('message', async (ctx) => {
   const sessionId = ctx.message.chat.id;
   sessions[sessionId] ??= createInitialSession();
-    console.log(sessions)
   try {
     await ctx.reply(code("Text accepted for processing"))
     const text = ctx.message.text
@@ -47,14 +46,19 @@ bot.on('message', async (ctx) => {
 
     const response = await openai.chat(sessions[sessionId].messages)
 
-    sessions[sessionId].messages.push({
-      role: openai.roles.ASSISTANT, 
-      content: response.content
-    })
-    await ctx.reply(response.content)
+    // Добавить задержку перед отправкой ответа
+    setTimeout(async () => {
+      sessions[sessionId].messages.push({
+        role: openai.roles.ASSISTANT, 
+        content: response.content
+      })
+      await ctx.reply(response.content)
+    }, 5000)
 
   } catch(error) {
     await ctx.reply("Sorry, no response received from the server")
+
+
   }
 });
 
