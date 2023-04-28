@@ -1,5 +1,5 @@
 import { Telegraf, session } from 'telegraf'
-import { code } from 'telegraf/format'
+import { message } from 'telegraf/filters'
 
 import config from 'config'
 import { openai } from './openai.js'
@@ -33,11 +33,10 @@ bot.command('new', async (ctx) => {
   await ctx.reply('The context has been reset.');
 });
 
-bot.on('message', async (ctx) => {
+bot.on(message('text'), async (ctx) => {
   const sessionId = ctx.message.chat.id;
   sessions[sessionId] ??= createInitialSession();
   try {
-    //await ctx.reply(code("Text accepted for processing"))
     const text = ctx.message.text
     sessions[sessionId].messages.push({
       role: openai.roles.USER,
