@@ -2,17 +2,21 @@
 
 First file `default.json` with code:
 
-`{
+```json
+{
     "BOT_TOKEN": "Telegram token",
     "OPENAI_KEY": "OpenAI Key"
-}`
+}
+```
 
 Second file `production.json` with code:
 
-`{
+```json
+{
     "BOT_TOKEN": "Telegram token",
     "OPENAI_KEY": "OpenAI Key"
-}`
+}
+```
 
 
 
