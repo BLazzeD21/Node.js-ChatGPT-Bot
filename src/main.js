@@ -76,19 +76,24 @@ bot.on(message('text'), async (ctx) => {
       content: text
     })
 
+    await new Promise(resolve => setTimeout(resolve, 5000));
     const response = await openai.chat(sessions[sessionId].messages)
 
     setTimeout(async () => {
-      sessions[sessionId].messages.push({
-        role: openai.roles.ASSISTANT, 
-        content: response.content
-      })
-      await ctx.reply(response.content)
+      if (response && response.content) {
+        sessions[sessionId].messages.push({
+          role: openai.roles.ASSISTANT, 
+          content: response.content
+        });
+        await ctx.reply(response.content);
+      } else {
+        await ctx.reply('⚠️ You are sending too many requests, the server is not able to process your messages in time');
+      }
     }, 5000)
 
   } catch(error) {
     console.log("Text error " + error.message)
-    await ctx.reply("Sorry, no response received from the server")
+    await ctx.reply("⛔️ Sorry, no response received from the server")
   }
 });
 
