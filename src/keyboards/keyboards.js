@@ -6,5 +6,4 @@ export function createMenuKeyboard() {
     [LEXICON_EN['reset_btn'], LEXICON_EN['getIDs_btn']],
   ])
   .resize()
-  .oneTime();
 }

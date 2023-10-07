@@ -31,14 +31,14 @@ const createInitialSession = () => {
 const resetContext = async (ctx) => {
   const sessionId = ctx.message.chat.id;
   sessions[sessionId] = createInitialSession();
-  await ctx.reply(LEXICON_EN['reset']);
+  await ctx.reply(LEXICON_EN['reset'], menuKeyboard);
 };
 
 const printIDs = async (ctx) => {
   const userId = ctx.from.id;
   const chatId = ctx.message.chat.id;
 
-  await ctx.reply(getIDs(chatId, userId), {parse_mode: 'HTML'});
+  await ctx.reply(getIDs(chatId, userId), {parse_mode: 'HTML'}, menuKeyboard);
 }
 
 bot.command('start', async (ctx) => {
@@ -49,12 +49,10 @@ bot.command('start', async (ctx) => {
 
 bot.command('help', async (ctx) => {
   if (await checkAccess(allowedUserId, ctx)) return;
-  ctx.reply(getHelp());
+  ctx.reply(getHelp(), menuKeyboard);
 });
 
 bot.command('chatid', async (ctx) => {
-  if (await checkAccess(allowedUserId, ctx)) return;
-
   printIDs(ctx);
 });
 
@@ -71,8 +69,6 @@ bot.hears(LEXICON_EN['reset_btn'], async (ctx) => {
 })
 
 bot.hears(LEXICON_EN['getIDs_btn'], async (ctx) => {
-  if (await checkAccess(allowedUserId, ctx)) return;
-
   printIDs(ctx);
 })
 
