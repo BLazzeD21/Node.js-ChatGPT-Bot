@@ -5,7 +5,8 @@ First file `default.json` with code:
 ```json
 {
     "BOT_TOKEN": "Telegram token",
-    "OPENAI_KEY": "OpenAI Key"
+    "OPENAI_KEY": "OpenAI Key",
+    "USERS_ID": "User IDs separated by commas without spaces"
 }
 ```
 
@@ -14,7 +15,8 @@ Second file `production.json` with code:
 ```json
 {
     "BOT_TOKEN": "Telegram token",
-    "OPENAI_KEY": "OpenAI Key"
+    "OPENAI_KEY": "OpenAI Key",
+    "USERS_ID": "User IDs separated by commas without spaces"
 }
 ```
 
