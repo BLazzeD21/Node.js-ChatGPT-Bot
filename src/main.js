@@ -1,14 +1,24 @@
-import { Telegraf, session } from 'telegraf'
+import { Telegraf, session, Markup } from 'telegraf'
 import { message } from 'telegraf/filters'
 import { code } from 'telegraf/format'
 
-import { converter } from './converter.js'
 import config from 'config'
+import { LEXICON_EN, getIDs, getHelp } from './lexicon/lexicon_en.js'
+import { createMenuKeyboard } from './keyboards/keyboards.js'
+import { setMenu } from './keyboards/set_menu.js'
+import { deleteWebHook } from './deleteWebhook.js'
 import { openai } from './openai.js'
+import { converter } from './converter.js'
+import { checkAccess } from './checkAccess.js'
 
 const sessions = {};
+const menuKeyboard = createMenuKeyboard();
 
-const bot = new Telegraf(config.get('BOT_TOKEN'))
+const bot = new Telegraf(config.get('BOT_TOKEN'));
+
+const allowedUserId = config.get('USERS_ID')
+  .split(',')
+  .map((id) => parseInt(id));
 
 bot.use(session())
 
@@ -18,28 +28,61 @@ const createInitialSession = () => {
   }
 };
 
+const resetContext = async (ctx) => {
+  const sessionId = ctx.message.chat.id;
+  sessions[sessionId] = createInitialSession();
+  await ctx.reply(LEXICON_EN['reset']);
+};
+
+const printIDs = async (ctx) => {
+  const userId = ctx.from.id;
+  const chatId = ctx.message.chat.id;
+
+  await ctx.reply(getIDs(chatId, userId), {parse_mode: 'HTML'});
+}
+
 bot.command('start', async (ctx) => {
   const sessionId = ctx.message.chat.id;
   sessions[sessionId] = createInitialSession();
-  await ctx.reply("Hello, welcome to an artificial intelligence chatbot that will help you with everything! 🤖\n\nYou can find the source code of the bot here:\nhttps://github.com/BLazzeD21/Node.js-ChatGPT-Bot");
+  await ctx.reply(LEXICON_EN['start'], menuKeyboard);
+});
+
+bot.command('help', async (ctx) => {
+  if (await checkAccess(allowedUserId, ctx)) return;
+  ctx.reply(getHelp());
 });
 
 bot.command('chatid', async (ctx) => {
-  const chatId = ctx.message.chat.id;
-  await ctx.reply(`This chat ID: ${chatId}`);
+  if (await checkAccess(allowedUserId, ctx)) return;
+
+  printIDs(ctx);
 });
 
 bot.command('new', async (ctx) => {
-  const sessionId = ctx.message.chat.id;
-  sessions[sessionId] = createInitialSession();
-  await ctx.reply('The context has been reset.');
+  if (await checkAccess(allowedUserId, ctx)) return;
+
+  resetContext(ctx);
 });
 
+bot.hears(LEXICON_EN['reset_btn'], async (ctx) => {
+  if (await checkAccess(allowedUserId, ctx)) return;
+
+  resetContext(ctx);
+})
+
+bot.hears(LEXICON_EN['getIDs_btn'], async (ctx) => {
+  if (await checkAccess(allowedUserId, ctx)) return;
+
+  printIDs(ctx);
+})
+
 bot.on(message('voice'), async (ctx) => {
+  if (await checkAccess(allowedUserId, ctx)) return;
+
   const sessionId = ctx.message.chat.id;
   sessions[sessionId] ??= createInitialSession();
   try {
-    await ctx.reply(code("Text accepted for processing"))
+    await ctx.reply(code(LEXICON_EN['processing']))
     const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id)
     const userId = String(ctx.message.from.id)
     const oggPath = await converter.create(link.href, userId)
@@ -60,9 +103,9 @@ bot.on(message('voice'), async (ctx) => {
         });
         await ctx.reply(response.content);
       } else {
-        await ctx.reply('⚠️ You are sending too many requests, the server is not able to process your messages in time');
+        await ctx.reply(LEXICON_EN['manyRequests']);
       }
-    }, 5000)
+    }, 2000)
 
   } catch (error) {
     console.log("Voice error " + error.message)
@@ -70,10 +113,12 @@ bot.on(message('voice'), async (ctx) => {
 });
 
 bot.on(message('text'), async (ctx) => {
+  if (await checkAccess(allowedUserId, ctx)) return;
+
   const sessionId = ctx.message.chat.id;
   sessions[sessionId] ??= createInitialSession();
   try {
-    await ctx.reply(code("Text accepted for processing"))
+    await ctx.reply(code(LEXICON_EN['processing']))
     const text = ctx.message.text
     sessions[sessionId].messages.push({
       role: openai.roles.USER,
@@ -91,17 +136,20 @@ bot.on(message('text'), async (ctx) => {
         });
         await ctx.reply(response.content);
       } else {
-        await ctx.reply('⚠️ You are sending too many requests, the server is not able to process your messages in time');
+        await ctx.reply(LEXICON_EN['manyRequests']);
       }
     }, 5000)
 
   } catch(error) {
     console.log("Text error " + error.message)
-    await ctx.reply("⛔️ Sorry, no response received from the server")
+    await ctx.reply(LEXICON_EN['noResponce'])
   }
 });
 
-bot.launch()
+setMenu(bot);
+deleteWebHook(bot);
+
+bot.launch();
 
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
