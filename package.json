@@ -29,6 +29,7 @@
     "config": "^3.3.9",
     "fluent-ffmpeg": "^2.1.2",
     "openai": "^3.2.1",
-    "telegraf": "^4.12.2"
+    "telegraf": "^4.12.2",
+    "telegraf-router": "^1.0.7"
   }
 }
