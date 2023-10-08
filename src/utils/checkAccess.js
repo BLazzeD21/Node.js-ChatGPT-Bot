@@ -1,4 +1,4 @@
-import { LEXICON_EN } from './lexicon/lexicon_en.js'
+import { LEXICON_EN } from '../lexicon/lexicon_en.js';
 
 export async function checkAccess(allowedUserId, ctx) {
   if (!allowedUserId.includes(ctx.from.id)) {
