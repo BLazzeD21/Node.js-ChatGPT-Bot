@@ -43,6 +43,13 @@ You can check if docker is installed correctly:
 docker --help
 ```
 
+Install make:
+
+```bash
+sudo apt-get -y install make
+```
+
+
 Go to the bot repository:
 
 ```bash
