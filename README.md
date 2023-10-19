@@ -3,7 +3,7 @@
 ![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-### If you want to deploy this bot on your VPS server, then here is the instruction
+## If you want to deploy this bot on your VPS server, then here is the instruction
 
 Open a terminal on the server. First, we synchronize the apt package database and install the necessary
 dependencies:
