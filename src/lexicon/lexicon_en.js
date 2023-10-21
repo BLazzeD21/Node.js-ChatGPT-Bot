@@ -6,6 +6,7 @@ export const commands = [
 ];
 
 export const LEXICON_EN = {
+  bot_started: 'Bot has been started! 🤖',
   start:
     'Hello, welcome to an artificial intelligence chatbot that will help you with everything! 🤖\n\nYou can find the source code of the bot here:\nhttps://github.com/BLazzeD21/Node.js-ChatGPT-Bot',
   deniedAccess: 'This functionality is not available to you ⛔️',
@@ -34,4 +35,12 @@ export const getHelp = () => {
 
 export const printError = (error) => {
   return `${error.name}: ${error.message}`;
+};
+
+export const messageSent = (recipient_id) => {
+  return `Message sent to user ID: ${recipient_id}`;
+};
+
+export const errorWhileSending = (error) => {
+  return `Error sending message:: ${error}`;
 };
