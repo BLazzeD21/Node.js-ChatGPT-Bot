@@ -5,6 +5,7 @@ import config from "config";
 import { LEXICON_EN } from "./lexicon/lexicon_en.js";
 import { setMenu } from "./keyboards/set_menu.js";
 import { deleteWebHook } from "./utils/deleteWebhook.js";
+import { sendMessages } from "./utils/sendMessages.js";
 
 import {
   startHandler,
@@ -41,7 +42,8 @@ bot.on(message("voice"), voiceHandler(allowedUserId, sessions));
 setMenu(bot);
 deleteWebHook(bot);
 
-bot.launch();
+bot.launch({dropPendingUpdates: true})
+.then(sendMessages(bot, allowedUserId))
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
