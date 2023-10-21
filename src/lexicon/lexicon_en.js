@@ -5,8 +5,10 @@ export const commands = [
   { command: 'chatid', description: 'Find the chat ID and your ID' },
 ];
 
+let date = new Date();
+
 export const LEXICON_EN = {
-  bot_started: 'Bot has been started! 🤖',
+  bot_started: `Bot has been started! 🤖\n\n${date}`,
   start:
     'Hello, welcome to an artificial intelligence chatbot that will help you with everything! 🤖\n\nYou can find the source code of the bot here:\nhttps://github.com/BLazzeD21/Node.js-ChatGPT-Bot',
   deniedAccess: 'This functionality is not available to you ⛔️',
