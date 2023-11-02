@@ -55,6 +55,11 @@ Install make:
 sudo apt-get -y install make
 ```
 
+Check the installed version:
+
+```bash
+make -v
+```
 
 Go to the bot repository:
 
