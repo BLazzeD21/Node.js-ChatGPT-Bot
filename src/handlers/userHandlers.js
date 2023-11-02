@@ -17,9 +17,9 @@ export const startHandler = (sessions) => {
   };
 };
 
-export const helpHandler = (allowedUserId) => {
+export const helpHandler = (config) => {
   return async (ctx) => {
-    if (await checkAccess(allowedUserId, ctx)) return;
+    if (await checkAccess(config, ctx)) return;
     await ctx.reply(await getHelp(), menuKeyboard);
   };
 };
@@ -44,9 +44,9 @@ export const passwordHandler = () => {
   };
 };
 
-export const newHandler = (allowedUserId, sessions) => {
+export const newHandler = (config, sessions) => {
   return async (ctx) => {
-    if (await checkAccess(allowedUserId, ctx)) return;
+    if (await checkAccess(config, ctx)) return;
 
     const sessionId = ctx.message.chat.id;
     sessions[sessionId] = createInitialSession();
@@ -54,13 +54,14 @@ export const newHandler = (allowedUserId, sessions) => {
   };
 };
 
-export const imageHandler = (allowedUserId) => {
+export const imageHandler = (config) => {
   return async (ctx) => {
-    if (await checkAccess(allowedUserId, ctx)) return;
+    if (await checkAccess(config, ctx)) return;
 
     const requestText = ctx.message.text
       .replace("/image", "")
       .trim();
+
     if (!requestText){
       await ctx.reply(LEXICON_EN['empty'], { parse_mode: "HTML" });
       return;

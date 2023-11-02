@@ -7,9 +7,9 @@ import { converter } from '../converter.js';
 import { createInitialSession } from '../utils/createSession.js';
 import { checkAccess } from '../utils/checkAccess.js';
 
-export const textHandler = (allowedUserId, sessions) => {
+export const textHandler = (config, sessions) => {
   return async (ctx) => {
-    if (await checkAccess(allowedUserId, ctx)) return;
+    if (await checkAccess(config, ctx)) return;
 
     const sessionId = ctx.message.chat.id;
     sessions[sessionId] ??= createInitialSession();
@@ -41,9 +41,9 @@ export const textHandler = (allowedUserId, sessions) => {
   };
 };
 
-export const voiceHandler = (allowedUserId, sessions) => {
+export const voiceHandler = (config, sessions) => {
   return async (ctx) => {
-    if (await checkAccess(allowedUserId, ctx)) return;
+    if (await checkAccess(config, ctx)) return;
 
     const sessionId = ctx.message.chat.id;
     sessions[sessionId] ??= createInitialSession();
