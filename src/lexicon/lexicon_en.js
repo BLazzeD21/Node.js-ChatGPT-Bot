@@ -16,6 +16,7 @@ export const LEXICON_EN = {
   manyRequests:
     'You are sending too many requests, the server is not able to process your messages in time ⚠️',
   noResponce: 'Sorry, no response received from the server ⛔️',
+  security: 'Your request was rejected by openai\'s security system 🚔  ',
   reset: 'The context has been reset.',
   reset_btn: 'Reset context 🗑',
   getIDs_btn: 'Get IDs 🗃',
