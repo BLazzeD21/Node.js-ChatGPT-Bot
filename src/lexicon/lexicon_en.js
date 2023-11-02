@@ -22,13 +22,14 @@ export const LEXICON_EN = {
   reset: 'The context has been reset.',
   reset_btn: 'Reset context 🗑',
   getIDs_btn: 'Get IDs 🗃',
+  password_btn: 'Generate password 🎲',
 };
 
-export const getIDs = (chatId, userId) => {
+export const getIDs = async (chatId, userId) => {
   return `Your ID: <code>${userId}</code>\nThis chat ID: <code>${chatId}</code>`;
 };
 
-export const getHelp = () => {
+export const getHelp = async () => {
   let helpMessage = 'Commands available in the bot:\n';
 
   for (let key in commands) {
@@ -38,14 +39,18 @@ export const getHelp = () => {
   return helpMessage;
 };
 
-export const printError = (error) => {
+export const printError = async (error) => {
   return `${error.name}: ${error.message}`;
 };
 
-export const messageSent = (recipient_id) => {
+export const messageSent = async (recipient_id) => {
   return `Message sent to user ID: ${recipient_id}`;
 };
 
-export const errorWhileSending = (error) => {
+export const errorWhileSending = async (error) => {
   return `Error sending message:: ${error}`;
 };
+
+export const printPassword = async (password) => {
+  return `<b>Generated password</b>:\n<code>${password}</code>`
+}

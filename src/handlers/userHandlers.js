@@ -1,10 +1,11 @@
-import { LEXICON_EN, getIDs, getHelp } from "../lexicon/lexicon_en.js";
+import { LEXICON_EN, getIDs, getHelp, printPassword } from "../lexicon/lexicon_en.js";
 import { createMenuKeyboard } from "../keyboards/keyboards.js";
 import { code } from "telegraf/format";
 import { openai } from "../openai.js";
 
 import { createInitialSession } from "../utils/createSession.js";
 import { checkAccess } from "../utils/checkAccess.js";
+import { generatePassword } from "../utils/generatePassword.js";
 
 const menuKeyboard = createMenuKeyboard();
 
@@ -19,7 +20,7 @@ export const startHandler = (sessions) => {
 export const helpHandler = (allowedUserId) => {
   return async (ctx) => {
     if (await checkAccess(allowedUserId, ctx)) return;
-    ctx.reply(getHelp(), menuKeyboard);
+    await ctx.reply(await getHelp(), menuKeyboard);
   };
 };
 
@@ -29,10 +30,17 @@ export const chatIDHandler = () => {
     const chatId = ctx.message.chat.id;
 
     await ctx.reply(
-      getIDs(chatId, userId),
+      await getIDs(chatId, userId),
       { parse_mode: "HTML" },
       menuKeyboard
     );
+  };
+};
+
+export const passwordHandler = () => {
+  return async (ctx) => {
+    const password = await generatePassword();
+    await ctx.reply(await printPassword(password), { parse_mode: "HTML" });
   };
 };
 
@@ -50,9 +58,11 @@ export const imageHandler = (allowedUserId) => {
   return async (ctx) => {
     if (await checkAccess(allowedUserId, ctx)) return;
 
-    const requestText = ctx.message.text.replace("/image", "").trim();
+    const requestText = ctx.message.text
+      .replace("/image", "")
+      .trim();
     if (!requestText){
-      ctx.reply(LEXICON_EN['empty'], { parse_mode: "HTML" });
+      await ctx.reply(LEXICON_EN['empty'], { parse_mode: "HTML" });
       return;
     }
 

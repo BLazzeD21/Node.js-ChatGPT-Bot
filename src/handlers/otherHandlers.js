@@ -22,20 +22,20 @@ export const textHandler = (allowedUserId, sessions) => {
       });
 
       const response = await openai.chat(sessions[sessionId].messages);
+      
       await ctx.deleteMessage(processing.message_id);
-      setTimeout(async () => {
-        if (response && response.content) {
-          sessions[sessionId].messages.push({
-            role: openai.roles.ASSISTANT,
-            content: response.content,
-          });
-          await ctx.reply(response.content);
-        } else {
-          await ctx.reply(LEXICON_EN['manyRequests']);
-        }
-      }, 2000);
+
+      if (response && response.content) {
+        sessions[sessionId].messages.push({
+          role: openai.roles.ASSISTANT,
+          content: response.content,
+        });
+        await ctx.reply(response.content);
+      } else {
+        await ctx.reply(LEXICON_EN['manyRequests']);
+      }
     } catch (error) {
-      console.log(printError(error));
+      console.log(await printError(error));
       await ctx.reply(LEXICON_EN['noResponce']);
     }
   };
@@ -60,18 +60,18 @@ export const voiceHandler = (allowedUserId, sessions) => {
       });
 
       const response = await openai.chat(sessions[sessionId].messages);
+
       await ctx.deleteMessage(processing.message_id);
-      setTimeout(async () => {
-        if (response && response.content) {
-          sessions[sessionId].messages.push({
-            role: openai.roles.ASSISTANT,
-            content: response.content,
-          });
-          await ctx.reply(response.content);
-        } else {
-          await ctx.reply(LEXICON_EN['manyRequests']);
-        }
-      }, 2000);
+      
+      if (response && response.content) {
+        sessions[sessionId].messages.push({
+          role: openai.roles.ASSISTANT,
+          content: response.content,
+        });
+        await ctx.reply(response.content);
+      } else {
+        await ctx.reply(LEXICON_EN['manyRequests']);
+      }
     } catch (error) {
       console.log(printError(error));
       await ctx.reply(LEXICON_EN['noResponce']);

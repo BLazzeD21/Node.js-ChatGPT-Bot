@@ -13,6 +13,7 @@ import {
   chatIDHandler,
   newHandler,
   imageHandler,
+  passwordHandler,
 } from "./handlers/userHandlers.js";
 import { textHandler, voiceHandler } from "./handlers/otherHandlers.js";
 
@@ -32,8 +33,10 @@ bot.command("new", newHandler(allowedUserId, sessions));
 bot.command("help", helpHandler(allowedUserId));
 bot.command("image", imageHandler(allowedUserId));
 bot.command("chatid", chatIDHandler());
+bot.command("password", passwordHandler());
 
 bot.hears(LEXICON_EN["getIDs_btn"], chatIDHandler());
+bot.hears(LEXICON_EN["password_btn"], passwordHandler());
 bot.hears(LEXICON_EN["reset_btn"], newHandler(allowedUserId, sessions));
 
 bot.on(message("text"), textHandler(allowedUserId, sessions));
