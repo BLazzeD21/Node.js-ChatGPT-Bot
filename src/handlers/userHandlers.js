@@ -50,11 +50,16 @@ export const imageHandler = (allowedUserId) => {
   return async (ctx) => {
     if (await checkAccess(allowedUserId, ctx)) return;
 
+    const requestText = ctx.message.text.replace("/image", "").trim();
+    if (!requestText){
+      ctx.reply(LEXICON_EN['empty'], { parse_mode: "HTML" });
+      return;
+    }
+
     const processing = await ctx.reply(code(LEXICON_EN["processing"]));
 
     const size = "1024x1024";
     const count = 1;
-    const requestText = ctx.message.text.replace("/image", "").trim();
 
     const imageUrl = await openai.getImage(requestText, size, count);
 

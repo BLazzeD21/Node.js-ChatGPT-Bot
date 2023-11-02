@@ -42,7 +42,8 @@ bot.on(message("voice"), voiceHandler(allowedUserId, sessions));
 setMenu(bot);
 deleteWebHook(bot);
 
-bot.launch({ dropPendingUpdates: true }).then(sendMessages(bot, allowedUserId));
+bot.launch({ dropPendingUpdates: true })
+  .then(sendMessages(bot, allowedUserId));
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
