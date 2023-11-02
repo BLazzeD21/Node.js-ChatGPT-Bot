@@ -1,12 +1,13 @@
 import { commands } from '../lexicon/lexicon_en.js';
+import { LEXICON_EN } from '../lexicon/lexicon_en.js';
 
 export const setMenu = async (bot) => {
   bot.telegram
     .setMyCommands(commands)
     .then(() => {
-      console.log('Custom commands set successfully');
+      console.log(LEXICON_EN['commands']);
     })
     .catch((error) => {
-      console.error('Error setting custom commands:', error);
+      console.error(LEXICON_EN['commandsError'], error);
     });
 };

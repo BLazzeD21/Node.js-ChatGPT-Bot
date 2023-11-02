@@ -1,10 +1,12 @@
+import { LEXICON_EN } from "../lexicon/lexicon_en.js";
+
 export const deleteWebHook = async (bot) => {
   bot.telegram
     .deleteWebhook()
     .then(() => {
-      console.log('Webhook deleted successfully');
+      console.log(LEXICON_EN['webhook']);
     })
     .catch((error) => {
-      console.error('Error deleting webhook:', error);
+      console.error(LEXICON_EN['webhookError'], error);
     });
 };

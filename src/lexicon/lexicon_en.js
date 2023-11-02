@@ -4,12 +4,19 @@ export const commands = [
   { command: 'help', description: "Find out the bot's capabilities" },
   { command: 'image', description: 'Creating an image based on a text query' },
   { command: 'chatid', description: 'Find the chat ID and your ID' },
+  { command: 'add', description: 'Adding new users' },
+  { command: 'remove', description: 'Removing users' },
+  {command: 'show', description: 'List of all elevated users'},
 ];
 
 let date = new Date();
 
 export const LEXICON_EN = {
   botStarted: `Bot has been started! 🤖\n\n${date}`,
+  commands: 'Custom commands set successfully',
+  commandsError: 'Error setting custom commands: ',
+  webhook: 'Webhook deleted successfully',
+  webhookError: 'Error deleting webhook: ',
   start:
     'Hello, welcome to an artificial intelligence chatbot that will help you with everything! 🤖\n\nYou can find the source code of the bot here:\nhttps://github.com/BLazzeD21/Node.js-ChatGPT-Bot',
   deniedAccess: 'This functionality is not available to you ⛔️',
@@ -19,10 +26,16 @@ export const LEXICON_EN = {
   noResponce: 'Sorry, no response received from the server ⛔️',
   security: 'Your request was rejected by openai\'s security system 🚔',
   empty: 'Make the right request\n\nWrite the command like this: /image <i>request text</i>',
+  emptyAdd: 'Make the right request\n\nWrite the command like this: /add <i>id</i>',
   reset: 'The context has been reset.',
   reset_btn: 'Reset context 🗑',
   getIDs_btn: 'Get IDs 🗃',
   password_btn: 'Generate password 🎲',
+  add: 'New user ID added successfully ⏬',
+  added: 'You have been successfully added to the system. Welcome! ❤️',
+  remove: 'user ID deleted ⏫',
+  super: 'You are not a super user 🔒',
+  errorSending: 'Error sending message to: ',
 };
 
 export const getIDs = async (chatId, userId) => {
