@@ -17,7 +17,13 @@ import { addHandler, showHandler } from "./handlers/adminHandlers.js";
 
 const sessions = {};
 
-let config = JSON.parse(fs.readFileSync('config/production.json', 'utf8'));
+let config;
+
+if (process.env.NODE_ENV === "production") {
+  config = JSON.parse(fs.readFileSync('config/production.json', 'utf8'));
+} else {
+  config = JSON.parse(fs.readFileSync('config/default.json', 'utf8'));
+}
 
 const bot = new Telegraf(config.BOT_TOKEN);
 
@@ -55,4 +61,4 @@ process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
 
 bot.launch({ dropPendingUpdates: true })
- .then(sendMessages(bot, await getUsersArray(config)));
+//  .then(sendMessages(bot, await getUsersArray(config)));

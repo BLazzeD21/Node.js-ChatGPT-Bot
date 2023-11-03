@@ -15,8 +15,12 @@ export const addHandler = (config, callback) => {
         }
 
         config.USERS_ID += `,${requestText}`;
-
-        fs.writeFileSync('config/production.json', JSON.stringify(config), 'utf8');
+        if (process.env.NODE_ENV === "production") {
+          fs.writeFileSync('config/production.json', JSON.stringify(config), 'utf8');
+        } else {
+          fs.writeFileSync('config/default.json', JSON.stringify(config), 'utf8');
+        }
+        
         callback(config);
 
         ctx.reply(LEXICON_EN['add']);
