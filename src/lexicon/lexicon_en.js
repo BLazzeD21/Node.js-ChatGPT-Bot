@@ -37,6 +37,7 @@ export const LEXICON_EN = {
   super: 'You are not a super user 🔒',
   errorSending: 'Error sending message to: ',
   waiting: 'The server timed out waiting for a response ⚠️',
+  noUser: 'There is no user with this ID ⚠️',
 };
 
 export const getIDs = async (chatId, userId) => {

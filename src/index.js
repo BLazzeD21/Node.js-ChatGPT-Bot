@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === "production") {
 
 const bot = new Telegraf(config.BOT_TOKEN, { handlerTimeout: 12_000_000 });
 
-const updateConfigValue = (updatedConfig) => {
+const updateConfigValue = async (updatedConfig) => {
   config = updatedConfig;
 };
 
@@ -61,11 +61,11 @@ bot.catch(async (error, ctx) => {
   }
 });
 
-setMenu(bot);
-deleteWebHook(bot);
+// setMenu(bot);
+// deleteWebHook(bot);
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
 
 bot.launch({ dropPendingUpdates: true })
- .then(sendMessages(bot, await getUsersArray(config)));
+//  .then(sendMessages(bot, await getUsersArray(config)));
