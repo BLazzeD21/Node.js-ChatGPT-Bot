@@ -3,10 +3,10 @@ import { message } from "telegraf/filters";
 import fs from 'fs';
 
 import { getUsersArray } from "./utils/checkAccess.js";
+import { sendMessages } from "./utils/sendMessages.js";
 import { LEXICON_EN } from "./lexicon/lexicon_en.js";
 import { setMenu } from "./keyboards/set_menu.js";
 import { deleteWebHook } from "./utils/deleteWebhook.js";
-import { sendMessages } from "./utils/sendMessages.js";
 
 import {
   startHandler, helpHandler, chatIDHandler,
@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === "production") {
   config = JSON.parse(fs.readFileSync('config/default.json', 'utf8'));
 }
 
-const bot = new Telegraf(config.BOT_TOKEN);
+const bot = new Telegraf(config.BOT_TOKEN, {handlerTimeout: 15_000_000});
 
 
 const updateConfigValue = (updatedConfig) => {
@@ -53,9 +53,14 @@ bot.hears(LEXICON_EN["reset_btn"], newHandler(config, sessions));
 bot.on(message("text"), textHandler(config, sessions));
 bot.on(message("voice"), voiceHandler(config, sessions));
 
+bot.catch((error, ctx) => {
+  if (error.name === 'TimeoutError') {
+      return ctx.reply(LEXICON_EN['waiting']);
+  }
+});
 
-setMenu(bot);
-deleteWebHook(bot);
+// setMenu(bot);
+// deleteWebHook(bot);
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
