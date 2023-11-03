@@ -52,7 +52,7 @@ class OpenAI {
       });
 
       const image_url = response.data.data[0].url;
-      console.log(image_url);
+      
       return image_url;
     } catch (error) {
       console.log(printError(error));

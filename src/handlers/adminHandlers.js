@@ -1,11 +1,12 @@
 import fs from 'fs';
 import { LEXICON_EN } from "../lexicon/lexicon_en.js";
+import { getUsersArray } from '../utils/checkAccess.js';
 
 export const addHandler = (config, callback) => {
   return async (ctx) => {
     if (ctx.from.id == config.SUPER_USER) {
       try {
-        const requestText = ctx.message.text
+        const requestText = await ctx.message.text
           .replace("/add", "")
           .trim();
         
@@ -21,15 +22,15 @@ export const addHandler = (config, callback) => {
           fs.writeFileSync('config/default.json', JSON.stringify(config), 'utf8');
         }
         
-        callback(config);
+        await callback(config);
 
-        ctx.reply(LEXICON_EN['add']);
+        await ctx.reply(LEXICON_EN['add']);
         ctx.telegram.sendMessage(requestText, LEXICON_EN['added']);
       } catch(e) {
         console.log(LEXICON_EN['errorSending'], requestText);
       }
     } else {
-        ctx.reply(LEXICON_EN['super']);
+        await ctx.reply(LEXICON_EN['super']);
     }
   }
 };
@@ -37,9 +38,23 @@ export const addHandler = (config, callback) => {
 export const showHandler = (config) => {
   return async (ctx) => {
     if (ctx.from.id == config.SUPER_USER) {
-      await ctx.reply(config.USERS_ID);
+      let usersExists = "";
+      const users = await getUsersArray(config);
+
+      users.forEach((userId) => {
+        ctx.telegram
+          .getChatMember(ctx.chat.id, userId)
+          .then((chatMember) => {
+            usersExists += `${userId},`;
+            console.log(usersExists);
+            console.log(`ID ${userId} exists`);
+          })
+          .catch((error) => {
+            console.log(`ID ${userId} does not exist: ${error}`);
+          });
+      });
     } else {
-      ctx.reply(LEXICON_EN['super']);
+      await ctx.reply(LEXICON_EN['super']);
     }
   }
 }

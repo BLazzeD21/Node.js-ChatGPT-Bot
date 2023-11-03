@@ -7,6 +7,8 @@ import { converter } from '../converter.js';
 import { createInitialSession } from '../utils/createSession.js';
 import { checkAccess } from '../utils/checkAccess.js';
 
+import { textFormat } from '../utils/textFilter.js';
+
 export const textHandler = (config, sessions) => {
   return async (ctx) => {
     if (await checkAccess(config, ctx)) return;
@@ -30,13 +32,15 @@ export const textHandler = (config, sessions) => {
           role: openai.roles.ASSISTANT,
           content: response.content,
         });
-        await ctx.reply(response.content);
+
+        await ctx.reply(response.content, { parse_mode: 'MarkdownV2' });
+
       } else {
         await ctx.reply(LEXICON_EN['manyRequests']);
       }
     } catch (error) {
       console.log(await printError(error));
-      await ctx.reply(LEXICON_EN['noResponce']);
+      await ctx.reply(`${LEXICON_EN['noResponce']}\n\n${error.message}`);
     }
   };
 };
@@ -68,13 +72,14 @@ export const voiceHandler = (config, sessions) => {
           role: openai.roles.ASSISTANT,
           content: response.content,
         });
-        await ctx.reply(response.content);
+
+        await ctx.reply(response.content, { parse_mode: 'MarkdownV2' });
       } else {
         await ctx.reply(LEXICON_EN['manyRequests']);
       }
     } catch (error) {
       console.log(printError(error));
-      await ctx.reply(LEXICON_EN['noResponce']);
+      await ctx.reply(`${LEXICON_EN['noResponce']}\n${error.name}: ${error.message}`);
     }
   };
 };
