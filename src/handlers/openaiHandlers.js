@@ -36,7 +36,7 @@ export const textHandler = (config, sessions) => {
           content: response.content,
         });
 
-        await ctx.reply(response.content);
+        await ctx.reply(response.content, { parse_mode: 'Markdown' });
       } else {
         await ctx.reply(LEXICON_EN['responseError'], { parse_mode: 'HTML' });
       }
@@ -81,7 +81,8 @@ export const voiceHandler = (config, sessions) => {
           role: openai.roles.ASSISTANT,
           content: response.content,
         });
-        await ctx.reply(response.content);
+
+        await ctx.reply(response.content, { parse_mode: 'Markdown' });
       } else {
         await ctx.reply(LEXICON_EN['responseError'], { parse_mode: 'HTML' });
       }

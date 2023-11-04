@@ -10,7 +10,6 @@ export async function getUsersArray(config) {
     usersArray = [config.SUPER_USER];
   }
 
-  console.log(usersArray);
   return usersArray;
 }
 
