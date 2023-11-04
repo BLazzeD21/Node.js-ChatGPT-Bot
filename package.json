@@ -21,6 +21,8 @@
   "homepage": "https://github.com/BLazzeD21/Node.js-ChatGPT-Bot#readme",
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "eslint": "^8.53.0",
+    "eslint-config-google": "^0.14.0",
     "nodemon": "^2.0.22"
   },
   "dependencies": {

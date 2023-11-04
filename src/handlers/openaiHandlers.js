@@ -25,8 +25,7 @@ export const textHandler = (config, sessions) => {
       });
 
       const response = await openai.chat(sessions[sessionId].messages);
-      
-      
+
 
       if (response && response.content) {
         sessions[sessionId].messages.push({
@@ -43,7 +42,7 @@ export const textHandler = (config, sessions) => {
       console.log(await printError(error));
       await ctx.reply(`${LEXICON_EN['noResponce']}\n\n${error.message}`);
     } finally {
-      await ctx.deleteMessage(processing.message_id); 
+      await ctx.deleteMessage(processing.message_id);
     }
   };
 };
@@ -68,7 +67,7 @@ export const voiceHandler = (config, sessions) => {
       });
 
       const response = await openai.chat(sessions[sessionId].messages);
-      
+
       if (response && response.content) {
         sessions[sessionId].messages.push({
           role: openai.roles.ASSISTANT,
@@ -81,9 +80,10 @@ export const voiceHandler = (config, sessions) => {
       }
     } catch (error) {
       console.log(printError(error));
-      await ctx.reply(`${LEXICON_EN['noResponce']}\n${error.name}: ${error.message}`);
+      await ctx.reply(`${LEXICON_EN['noResponce']}\
+      \n${error.name}: ${error.message}`);
     } finally {
-      await ctx.deleteMessage(processing.message_id); 
+      await ctx.deleteMessage(processing.message_id);
     }
   };
 };
@@ -93,17 +93,17 @@ export const imageHandler = (config) => {
     if (await checkAccess(config, ctx)) return;
 
     const requestText = ctx.message.text
-      .replace("/image", "")
-      .trim();
+        .replace('/image', '')
+        .trim();
 
-    if (!requestText){
-      await ctx.reply(LEXICON_EN['empty'], { parse_mode: "HTML" });
+    if (!requestText) {
+      await ctx.reply(LEXICON_EN['empty'], { parse_mode: 'HTML' });
       return;
     }
 
-    const processing = await ctx.reply(code(LEXICON_EN["processing"]));
+    const processing = await ctx.reply(code(LEXICON_EN['processing']));
 
-    const size = "1024x1024";
+    const size = '1024x1024';
     const count = 1;
 
     const imageUrl = await openai.getImage(requestText, size, count);
@@ -115,6 +115,6 @@ export const imageHandler = (config) => {
       return;
     }
 
-    await ctx.reply(LEXICON_EN["security"]);
+    await ctx.reply(LEXICON_EN['security']);
   };
 };
