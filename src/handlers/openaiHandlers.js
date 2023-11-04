@@ -7,8 +7,6 @@ import { converter } from '../converter.js';
 import { createInitialSession } from '../utils/createSession.js';
 import { checkAccess } from '../utils/checkAccess.js';
 
-// import { textFormat } from '../utils/textFilter.js';
-
 export const textHandler = (config, sessions) => {
   return async (ctx) => {
     if (await checkAccess(config, ctx)) return;

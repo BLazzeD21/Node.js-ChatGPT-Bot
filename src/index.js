@@ -60,11 +60,11 @@ bot.catch(async (error, ctx) => {
   }
 });
 
-// setMenu(bot);
-// deleteWebHook(bot);
+setMenu(bot);
+deleteWebHook(bot);
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
-bot.launch({ dropPendingUpdates: true });
-// .then(sendMessages(bot, await getUsersArray(config)));
+bot.launch({ dropPendingUpdates: true })
+  .then(sendMessages(bot, await getUsersArray(config)));
