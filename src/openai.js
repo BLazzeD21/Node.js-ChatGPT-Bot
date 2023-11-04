@@ -1,14 +1,13 @@
-import { printError } from "./lexicon/lexicon_en.js";
 
-import { Configuration, OpenAIApi } from "openai";
-import config from "config";
-import { createReadStream } from "fs";
+import { Configuration, OpenAIApi } from 'openai';
+import config from 'config';
+import { createReadStream } from 'fs';
 
 class OpenAI {
   roles = {
-    ASSISTANT: "assistant",
-    USER: "user",
-    SYSTEM: "system",
+    ASSISTANT: 'assistant',
+    USER: 'user',
+    SYSTEM: 'system',
   };
 
   constructor(apiKey) {
@@ -21,25 +20,27 @@ class OpenAI {
   async chat(messages) {
     try {
       const response = await this.openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: 'gpt-3.5-turbo',
         messages,
       });
 
       return response.data.choices[0].message;
     } catch (error) {
-      console.log(printError(error));
+      console.log(`${error.name} chat: ${error.message}`);
+      return error.response.status;
     }
   }
 
   async transcription(filepath) {
     try {
       const response = await this.openai.createTranscription(
-        createReadStream(filepath),
-        "whisper-1"
+          createReadStream(filepath),
+          'whisper-1',
       );
       return response.data.text;
     } catch (error) {
-      console.log(printError(error));
+      console.log(`${error.name} transcription: ${error.message}`);
+      return error.response.status;
     }
   }
 
@@ -51,13 +52,14 @@ class OpenAI {
         size: size,
       });
 
-      const image_url = response.data.data[0].url;
-      console.log(image_url);
-      return image_url;
+      const imageUrl = response.data.data[0].url;
+
+      return imageUrl;
     } catch (error) {
-      console.log(printError(error));
+      console.log(`${error.name} getImage: ${error.message}`);
+      return error.response.status;
     }
   }
 }
 
-export const openai = new OpenAI(config.get("OPENAI_KEY"));
+export const openai = new OpenAI(config.get('OPENAI_KEY'));

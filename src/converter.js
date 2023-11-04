@@ -18,22 +18,22 @@ class OggConverter {
   toMp3(input, output) {
     try {
       const outputPath = resolve(
-        __dirname,
-        '..',
-        dirname(input),
-        `${output}.mp3`
+          __dirname,
+          '..',
+          dirname(input),
+          `${output}.mp3`,
       );
 
       return new Promise((resolve, reject) => {
         ffmpeg(input)
-          .inputOption('-t 30')
-          .output(outputPath)
-          .on('end', () => {
-            deleteFile(input);
-            resolve(outputPath);
-          })
-          .on('error', (err) => reject(err.message))
-          .run();
+            .inputOption('-t 30')
+            .output(outputPath)
+            .on('end', () => {
+              deleteFile(input);
+              resolve(outputPath);
+            })
+            .on('error', (err) => reject(err.message))
+            .run();
       });
     } catch (error) {
       console.log('Error create:' + error.message);
