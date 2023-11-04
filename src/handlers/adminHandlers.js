@@ -40,6 +40,53 @@ export const addHandler = (config, callback) => {
   };
 };
 
+export const removeHandler = (config, callback) => {
+  return async (ctx) => {
+    if (ctx.from.id == config.SUPER_USER) {
+      try {
+        const requestText = parseInt(ctx.message.text
+            .replace('/remove', '')
+            .trim());
+
+        if (!requestText) {
+          await ctx.reply(LEXICON_EN['removeAdd'], { parse_mode: 'HTML' });
+          return;
+        }
+        const usersID = config.USERS_ID.split(',');
+
+        if (!usersID.includes(requestText.toString())) {
+          ctx.reply('No');
+          return;
+        }
+        const filteredUsers = usersID
+            .filter((id) => id !== requestText.toString())
+            .join(',');
+
+        config.USERS_ID = filteredUsers;
+
+        if (process.env.NODE_ENV === 'production') {
+          fs.writeFileSync('config/production.json',
+              JSON.stringify(config, null, 2), 'utf8');
+        } else {
+          fs.writeFileSync('config/default.json',
+              JSON.stringify(config, null, 2), 'utf8');
+        }
+
+        await callback(config);
+
+        const output =`<b>Removed ID: </b><code>${requestText}</code>\n\n` +
+        `${LEXICON_EN['remove']}`;
+
+        ctx.reply(output, { parse_mode: 'HTML' });
+      } catch (e) {
+        console.log(LEXICON_EN['errorSending'], requestText);
+      }
+    } else {
+      await ctx.reply(LEXICON_EN['super']);
+    }
+  };
+};
+
 export const showHandler = (config) => {
   return async (ctx) => {
     if (ctx.from.id == config.SUPER_USER) {
