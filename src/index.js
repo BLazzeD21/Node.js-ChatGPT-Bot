@@ -14,7 +14,7 @@ import {
 } from './handlers/userHandlers.js';
 import { textHandler, voiceHandler, imageHandler,
 } from './handlers/openaiHandlers.js';
-import { addHandler, showHandler,
+import { addHandler, removeHandler, showHandler,
 } from './handlers/adminHandlers.js';
 
 const sessions = {};
@@ -38,7 +38,7 @@ bot.use(session());
 bot.command('start', startHandler(sessions));
 
 bot.command('add', addHandler(config, updateConfigValue));
-
+bot.command('remove', removeHandler(config, updateConfigValue));
 bot.command('show', showHandler(config));
 
 bot.command('new', newHandler(config, sessions));
@@ -67,4 +67,4 @@ process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
 bot.launch({ dropPendingUpdates: true });
-//  .then(sendMessages(bot, await getUsersArray(config)));
+// .then(sendMessages(bot, await getUsersArray(config)));

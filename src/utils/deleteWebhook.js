@@ -7,6 +7,6 @@ export const deleteWebHook = async (bot) => {
         console.log(LEXICON_EN['webhook']);
       })
       .catch((error) => {
-        console.error(LEXICON_EN['webhookError'], error);
+        console.log(`${error.name} webhook: ${error.message}`);
       });
 };

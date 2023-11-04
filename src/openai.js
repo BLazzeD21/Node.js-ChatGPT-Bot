@@ -1,4 +1,3 @@
-import { printError } from './lexicon/lexicon_en.js';
 
 import { Configuration, OpenAIApi } from 'openai';
 import config from 'config';
@@ -27,7 +26,8 @@ class OpenAI {
 
       return response.data.choices[0].message;
     } catch (error) {
-      console.log(printError(error));
+      console.log(`${error.name} chat: ${error.message}`);
+      return error.response.status;
     }
   }
 
@@ -39,7 +39,8 @@ class OpenAI {
       );
       return response.data.text;
     } catch (error) {
-      console.log(printError(error));
+      console.log(`${error.name} transcription: ${error.message}`);
+      return error.response.status;
     }
   }
 
@@ -55,7 +56,8 @@ class OpenAI {
 
       return imageUrl;
     } catch (error) {
-      console.log(printError(error));
+      console.log(`${error.name} getImage: ${error.message}`);
+      return error.response.status;
     }
   }
 }

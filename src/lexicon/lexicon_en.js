@@ -14,23 +14,25 @@ const date = new Date();
 export const LEXICON_EN = {
   botStarted: `Bot has been started! 🤖\n\n${date}`,
   commands: 'Custom commands set successfully',
-  commandsError: 'Error setting custom commands: ',
   webhook: 'Webhook deleted successfully',
-  webhookError: 'Error deleting webhook: ',
   start:
   'Hello, welcome to an artificial intelligence chatbot\
   that will help you with everything! 🤖\n\nYou can find\
   the source code of the bot here:\nhttps://github.com/BLazzeD21/Node.js-ChatGPT-Bot',
   deniedAccess: 'This functionality is not available to you ⛔️',
   processing: 'Text accepted for processing',
-  manyRequests: 'You are sending too many requests, the server is not\
-  able to process your messages in time ⚠️',
+  responseError: 'Your request could not be processed or ' +
+  'the number of requests has been exceeded, please try again.  ' +
+  '\n\nIf the problem is not solved, ' +
+  'create a new session via /new or wait a little. ⚠️',
   noResponce: 'Sorry, no response received from the server ⛔️',
   security: 'Your request was rejected by openai\'s security system 🚔',
   empty: 'Make the right request\n\nWrite the command like this:\
   /image <i>request text</i>',
   emptyAdd: 'Make the right request\n\nWrite the command like this:\
   /add <i>id</i>',
+  removeAdd: 'Make the right request\n\nWrite the command like this:\
+  /remove <i>id</i>',
   reset: 'The context has been reset.',
   reset_btn: 'Reset context 🗑',
   getIDs_btn: 'Get IDs 🗃',
@@ -60,16 +62,12 @@ export const getHelp = async () => {
   return helpMessage;
 };
 
-export const printError = async (error) => {
-  return `${error.name}: ${error.message}`;
-};
-
 export const messageSent = async (recipientId) => {
   return `Message sent to user ID: ${recipientId}`;
 };
 
 export const errorWhileSending = async (error) => {
-  return `Error sending message:: ${error}`;
+  return `Error sending message: ${error}`;
 };
 
 export const printPassword = async (password) => {

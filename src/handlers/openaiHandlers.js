@@ -1,5 +1,5 @@
 import { code } from 'telegraf/format';
-import { LEXICON_EN, printError } from '../lexicon/lexicon_en.js';
+import { LEXICON_EN } from '../lexicon/lexicon_en.js';
 
 import { openai } from '../openai.js';
 import { converter } from '../converter.js';
@@ -26,6 +26,9 @@ export const textHandler = (config, sessions) => {
 
       const response = await openai.chat(sessions[sessionId].messages);
 
+      if (response=='401') {
+        throw new Error('Request failed with status code 401');
+      }
 
       if (response && response.content) {
         sessions[sessionId].messages.push({
@@ -34,13 +37,14 @@ export const textHandler = (config, sessions) => {
         });
 
         await ctx.reply(response.content);
-        // await ctx.reply(response.content, { parse_mode: 'MarkdownV2' });
       } else {
-        await ctx.reply(LEXICON_EN['manyRequests']);
+        await ctx.reply(LEXICON_EN['responseError'], { parse_mode: 'HTML' });
       }
     } catch (error) {
-      console.log(await printError(error));
-      await ctx.reply(`${LEXICON_EN['noResponce']}\n\n${error.message}`);
+      console.log(`${error.name}: ${error.message}`);
+      await ctx.reply(
+          `${LEXICON_EN['noResponce']}\n\n${error.name}: ${error.message}`,
+      );
     } finally {
       await ctx.deleteMessage(processing.message_id);
     }
@@ -68,20 +72,24 @@ export const voiceHandler = (config, sessions) => {
 
       const response = await openai.chat(sessions[sessionId].messages);
 
+      if (response=='401') {
+        throw new Error('Request failed with status code 401');
+      }
+
       if (response && response.content) {
         sessions[sessionId].messages.push({
           role: openai.roles.ASSISTANT,
           content: response.content,
         });
         await ctx.reply(response.content);
-        // await ctx.reply(response.content, { parse_mode: 'MarkdownV2' });
       } else {
-        await ctx.reply(LEXICON_EN['manyRequests']);
+        await ctx.reply(LEXICON_EN['responseError'], { parse_mode: 'HTML' });
       }
     } catch (error) {
-      console.log(printError(error));
-      await ctx.reply(`${LEXICON_EN['noResponce']}\
-      \n${error.name}: ${error.message}`);
+      console.log(`${error.name}: ${error.message}`);
+      await ctx.reply(
+          `${LEXICON_EN['noResponce']}\n\n${error.name}: ${error.message}`,
+      );
     } finally {
       await ctx.deleteMessage(processing.message_id);
     }
@@ -92,29 +100,42 @@ export const imageHandler = (config) => {
   return async (ctx) => {
     if (await checkAccess(config, ctx)) return;
 
-    const requestText = ctx.message.text
-        .replace('/image', '')
-        .trim();
-
-    if (!requestText) {
-      await ctx.reply(LEXICON_EN['empty'], { parse_mode: 'HTML' });
-      return;
-    }
-
     const processing = await ctx.reply(code(LEXICON_EN['processing']));
+    try {
+      const requestText = ctx.message.text
+          .replace('/image', '')
+          .trim();
 
-    const size = '1024x1024';
-    const count = 1;
+      if (!requestText) {
+        await ctx.reply(LEXICON_EN['empty'], { parse_mode: 'HTML' });
+        return;
+      }
 
-    const imageUrl = await openai.getImage(requestText, size, count);
+      const size = '1024x1024';
+      const count = 1;
 
-    await ctx.deleteMessage(processing.message_id);
+      const imageUrl = await openai.getImage(requestText, size, count);
 
-    if (imageUrl) {
-      await ctx.replyWithPhoto({ url: imageUrl }, { caption: requestText });
-      return;
+      if (imageUrl == '400') {
+        await ctx.reply(LEXICON_EN['security']);
+        return;
+      }
+
+      if (imageUrl=='401') {
+        throw new Error('Request failed with status code 401');
+      }
+
+      if (imageUrl) {
+        await ctx.replyWithPhoto({ url: imageUrl }, { caption: requestText });
+        return;
+      }
+    } catch (error) {
+      console.log(`${error.name} imageHandler: ${error.message}`);
+      await ctx.reply(
+          `${LEXICON_EN['noResponce']}\n\n${error.name}: ${error.message}`,
+      );
+    } finally {
+      await ctx.deleteMessage(processing.message_id);
     }
-
-    await ctx.reply(LEXICON_EN['security']);
   };
 };

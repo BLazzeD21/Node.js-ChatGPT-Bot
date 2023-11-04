@@ -8,6 +8,6 @@ export const setMenu = async (bot) => {
         console.log(LEXICON_EN['commands']);
       })
       .catch((error) => {
-        console.error(LEXICON_EN['commandsError'], error);
+        console.log(`${error.name} setmenu: ${error.message}`);
       });
 };
