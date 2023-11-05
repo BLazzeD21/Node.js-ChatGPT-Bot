@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === 'production') {
   config = JSON.parse(fs.readFileSync('config/default.json', 'utf8'));
 }
 
-const bot = new Telegraf(config.BOT_TOKEN, { handlerTimeout: 12_000_000 });
+const bot = new Telegraf(config.BOT_TOKEN, { handlerTimeout: 180_000 });
 
 const updateConfigValue = async (updatedConfig) => {
   config = updatedConfig;
