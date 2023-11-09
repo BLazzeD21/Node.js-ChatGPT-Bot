@@ -9,112 +9,116 @@ import { checkAccess } from '../utils/checkAccess.js';
 
 import ErrorHandler from './errorHandler.js';
 
-export const textHandler = (config, sessions) => {
-  return async (ctx) => {
-    if (await checkAccess(config, ctx)) return;
+class OpenAIHandlers {
+  textHandler = (config, sessions) => {
+    return async (ctx) => {
+      if (await checkAccess(config, ctx)) return;
 
-    const sessionId = ctx.message.chat.id;
-    sessions[sessionId] ??= createInitialSession();
+      const sessionId = ctx.message.chat.id;
+      sessions[sessionId] ??= createInitialSession();
 
-    const processing = await ctx.reply(code(LEXICON_EN['processingText']));
+      const processing = await ctx.reply(code(LEXICON_EN['processingText']));
 
-    const text = ctx.message.text;
+      const text = ctx.message.text;
 
-    sessions[sessionId].messages.push({
-      role: openai.roles.USER,
-      content: text,
-    });
+      sessions[sessionId].messages.push({
+        role: openai.roles.USER,
+        content: text,
+      });
 
-    openai
-        .chat(sessions[sessionId].messages)
-        .then(async (response) => {
-          if (response && response.content) {
-            sessions[sessionId].messages.push({
-              role: openai.roles.ASSISTANT,
-              content: response.content,
-            });
-          }
+      openai
+          .chat(sessions[sessionId].messages)
+          .then(async (response) => {
+            if (response && response.content) {
+              sessions[sessionId].messages.push({
+                role: openai.roles.ASSISTANT,
+                content: response.content,
+              });
+            }
 
-          await ctx.reply(response.content, { parse_mode: 'Markdown' });
-        })
-        .catch(ErrorHandler.responseError(ctx, 'textHandler'))
-        .finally(async () => {
-          await ctx.deleteMessage(processing.message_id);
-        });
-  };
-};
-
-export const voiceHandler = (config, sessions) => {
-  return async (ctx) => {
-    if (await checkAccess(config, ctx)) return;
-
-    const sessionId = ctx.message.chat.id;
-    sessions[sessionId] ??= createInitialSession();
-
-    const processing = await ctx.reply(code(LEXICON_EN['processingVoice']));
-
-    const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
-    const userId = String(ctx.message.from.id);
-
-    const oggPath = await converter.create(link.href, userId);
-    const mp3Path = await converter.toMp3(oggPath, userId);
-
-    openai
-        .transcription(mp3Path)
-        .then(async (text) => {
-          sessions[sessionId].messages.push({
-            role: openai.roles.USER,
-            content: text,
+            await ctx.reply(response.content, { parse_mode: 'Markdown' });
+          })
+          .catch(ErrorHandler.responseError(ctx, 'textHandler'))
+          .finally(async () => {
+            await ctx.deleteMessage(processing.message_id);
           });
-
-          openai
-              .chat(sessions[sessionId].messages)
-              .then(async (response) => {
-                sessions[sessionId].messages.push({
-                  role: openai.roles.ASSISTANT,
-                  content: response.content,
-                });
-
-                await ctx.reply(response.content, { parse_mode: 'Markdown' });
-              })
-              .catch(ErrorHandler.responseError(ctx, 'transcription'));
-        })
-        .catch(ErrorHandler.responseError(ctx, 'voiceHandler'))
-        .finally(async () => {
-          await ctx.deleteMessage(processing.message_id);
-        });
+    };
   };
-};
 
-export const imageHandler = (config) => {
-  return async (ctx) => {
-    if (await checkAccess(config, ctx)) return;
+  voiceHandler = (config, sessions) => {
+    return async (ctx) => {
+      if (await checkAccess(config, ctx)) return;
 
-    const processing = await ctx.reply(code(LEXICON_EN['processingImage']));
+      const sessionId = ctx.message.chat.id;
+      sessions[sessionId] ??= createInitialSession();
 
-    const requestText = ctx.message.text.replace('/image', '').trim();
+      const processing = await ctx.reply(code(LEXICON_EN['processingVoice']));
 
-    if (!requestText) {
-      await ctx.reply(LEXICON_EN['empty'], { parse_mode: 'HTML' });
-      return;
-    }
+      const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
+      const userId = String(ctx.message.from.id);
 
-    const size = '1024x1024';
-    const count = 1;
+      const oggPath = await converter.create(link.href, userId);
+      const mp3Path = await converter.toMp3(oggPath, userId);
 
-    openai
-        .getImage(requestText, size, count)
-        .then(async (response) => {
-          if (response) {
-            await ctx.replyWithPhoto(
-                { url: response }, { caption: requestText },
-            );
-            return;
-          }
-        })
-        .catch(ErrorHandler.responseError(ctx, 'textHandler'))
-        .finally(async () => {
-          await ctx.deleteMessage(processing.message_id);
-        });
+      openai
+          .transcription(mp3Path)
+          .then(async (text) => {
+            sessions[sessionId].messages.push({
+              role: openai.roles.USER,
+              content: text,
+            });
+
+            openai
+                .chat(sessions[sessionId].messages)
+                .then(async (response) => {
+                  sessions[sessionId].messages.push({
+                    role: openai.roles.ASSISTANT,
+                    content: response.content,
+                  });
+
+                  await ctx.reply(response.content, { parse_mode: 'Markdown' });
+                })
+                .catch(ErrorHandler.responseError(ctx, 'transcription'));
+          })
+          .catch(ErrorHandler.responseError(ctx, 'voiceHandler'))
+          .finally(async () => {
+            await ctx.deleteMessage(processing.message_id);
+          });
+    };
   };
-};
+
+  imageHandler = (config) => {
+    return async (ctx) => {
+      if (await checkAccess(config, ctx)) return;
+
+      const processing = await ctx.reply(code(LEXICON_EN['processingImage']));
+
+      const requestText = ctx.message.text.replace('/image', '').trim();
+
+      if (!requestText) {
+        await ctx.reply(LEXICON_EN['empty'], { parse_mode: 'HTML' });
+        return;
+      }
+
+      const size = '1024x1024';
+      const count = 1;
+
+      openai
+          .getImage(requestText, size, count)
+          .then(async (response) => {
+            if (response) {
+              await ctx.replyWithPhoto(
+                  { url: response }, { caption: requestText },
+              );
+              return;
+            }
+          })
+          .catch(ErrorHandler.responseError(ctx, 'textHandler'))
+          .finally(async () => {
+            await ctx.deleteMessage(processing.message_id);
+          });
+    };
+  };
+}
+
+export default new OpenAIHandlers();
