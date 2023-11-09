@@ -1,7 +1,6 @@
 
 import { Configuration, OpenAIApi } from 'openai';
 import config from 'config';
-import { createReadStream } from 'fs';
 
 class OpenAI {
   roles = {
@@ -18,30 +17,15 @@ class OpenAI {
   }
 
   async chat(messages) {
-    try {
-      const response = await this.openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages,
-      });
+    const response = await this.openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages,
+    });
 
-      return response.data.choices[0].message;
-    } catch (error) {
-      console.log(`${error.name} chat: ${error.message}`);
-      return error.response.status;
-    }
+    return response.data.choices[0].message;
   }
 
   async transcription(filepath) {
-    try {
-      const response = await this.openai.createTranscription(
-          createReadStream(filepath),
-          'whisper-1',
-      );
-      return response.data.text;
-    } catch (error) {
-      console.log(`${error.name} transcription: ${error.message}`);
-      return error.response.status;
-    }
   }
 
   async getImage(text, size, count) {

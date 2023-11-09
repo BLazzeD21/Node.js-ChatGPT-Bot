@@ -16,37 +16,31 @@ export const textHandler = (config, sessions) => {
     sessions[sessionId] ??= createInitialSession();
 
     const processing = await ctx.reply(code(LEXICON_EN['processingText']));
-    try {
-      const text = ctx.message.text;
-      sessions[sessionId].messages.push({
-        role: openai.roles.USER,
-        content: text,
-      });
 
-      const response = await openai.chat(sessions[sessionId].messages);
+    const text = ctx.message.text;
 
-      if (response=='401') {
-        throw new Error('Request failed with status code 401');
-      }
+    sessions[sessionId].messages.push({
+      role: openai.roles.USER,
+      content: text,
+    });
 
+    openai.chat(sessions[sessionId].messages).then( async (response) => {
       if (response && response.content) {
         sessions[sessionId].messages.push({
           role: openai.roles.ASSISTANT,
           content: response.content,
         });
-
-        await ctx.reply(response.content, { parse_mode: 'Markdown' });
-      } else {
-        await ctx.reply(LEXICON_EN['responseError'], { parse_mode: 'HTML' });
       }
-    } catch (error) {
-      console.log(`${error.name}: ${error.message}`);
+
+      await ctx.reply(response.content, { parse_mode: 'Markdown' });
+    }).catch(async (error) => {
+      console.log(`${error.name} imageHandler: ${error.message}`);
       await ctx.reply(
           `${LEXICON_EN['noResponce']}\n\n${error.name}: ${error.message}`,
       );
-    } finally {
+    }).finally(async () => {
       await ctx.deleteMessage(processing.message_id);
-    }
+    });
   };
 };
 
