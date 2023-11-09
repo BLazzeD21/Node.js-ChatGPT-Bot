@@ -17,48 +17,33 @@ class OpenAI {
     this.openai = new OpenAIApi(configuration);
   }
 
-  async chat(messages) {
-    try {
-      const response = await this.openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages,
-      });
-
-      return response.data.choices[0].message;
-    } catch (error) {
-      console.log(`${error.name} chat: ${error.message}`);
-      return error.response.status;
-    }
+  async transcription(filepath) {
+    const response = await this.openai.createTranscription(
+        createReadStream(filepath),
+        'whisper-1',
+    );
+    return response.data.text;
   }
 
-  async transcription(filepath) {
-    try {
-      const response = await this.openai.createTranscription(
-          createReadStream(filepath),
-          'whisper-1',
-      );
-      return response.data.text;
-    } catch (error) {
-      console.log(`${error.name} transcription: ${error.message}`);
-      return error.response.status;
-    }
+  async chat(messages) {
+    const response = await this.openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages,
+    });
+
+    return response.data.choices[0].message;
   }
 
   async getImage(text, size, count) {
-    try {
-      const response = await this.openai.createImage({
-        prompt: text,
-        n: count,
-        size: size,
-      });
+    const response = await this.openai.createImage({
+      prompt: text,
+      n: count,
+      size: size,
+    });
 
-      const imageUrl = response.data.data[0].url;
+    const imageUrl = response.data.data[0].url;
 
-      return imageUrl;
-    } catch (error) {
-      console.log(`${error.name} getImage: ${error.message}`);
-      return error.response.status;
-    }
+    return imageUrl;
   }
 }
 
