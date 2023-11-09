@@ -45,20 +45,15 @@ class OpenAI {
   }
 
   async getImage(text, size, count) {
-    try {
-      const response = await this.openai.createImage({
-        prompt: text,
-        n: count,
-        size: size,
-      });
+    const response = await this.openai.createImage({
+      prompt: text,
+      n: count,
+      size: size,
+    });
 
-      const imageUrl = response.data.data[0].url;
+    const imageUrl = response.data.data[0].url;
 
-      return imageUrl;
-    } catch (error) {
-      console.log(`${error.name} getImage: ${error.message}`);
-      return error.response.status;
-    }
+    return imageUrl;
   }
 }
 

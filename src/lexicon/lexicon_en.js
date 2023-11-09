@@ -20,13 +20,14 @@ export const LEXICON_EN = {
   that will help you with everything! 🤖\n\nYou can find\
   the source code of the bot here:\nhttps://github.com/BLazzeD21/Node.js-ChatGPT-Bot',
   deniedAccess: 'This functionality is not available to you ⛔️',
-  processing: 'Text accepted for processing',
+  processingText: 'Text accepted for processing',
+  processingVoice: 'Voice message accepted for processing',
+  processingImage: 'The request to generate an image was accepted for processing',
   responseError: 'Your request could not be processed or ' +
   'the number of requests has been exceeded, please try again.  ' +
   '\n\nIf the problem is not solved, ' +
   'create a new session via /new or wait a little. ⚠️',
   noResponce: 'Sorry, no response received from the server ⛔️',
-  security: 'Your request was rejected by openai\'s security system 🚔',
   empty: 'Make the right request\n\nWrite the command like this:\
   /image <i>request text</i>',
   emptyAdd: 'Make the right request\n\nWrite the command like this:\
