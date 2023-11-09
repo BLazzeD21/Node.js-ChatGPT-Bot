@@ -22,7 +22,8 @@ export const LEXICON_EN = {
   deniedAccess: 'This functionality is not available to you ⛔️',
   processingText: 'Text accepted for processing',
   processingVoice: 'Voice message accepted for processing',
-  processingImage: 'The request to generate an image was accepted for processing',
+  processingImage: 'The request to generate an'+
+  'image was accepted for processing',
   responseError: 'Your request could not be processed or ' +
   'the number of requests has been exceeded, please try again.  ' +
   '\n\nIf the problem is not solved, ' +
