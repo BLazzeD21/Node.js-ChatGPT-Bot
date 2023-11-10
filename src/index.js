@@ -12,7 +12,11 @@ import UserHandlers from './handlers/userHandlers.js';
 import OpenAIHandlers from './handlers/openaiHandlers.js';
 import AdminHandlers from './handlers/adminHandlers.js';
 
-const sessions = {};
+import { Redis } from '@telegraf/session/redis';
+
+const store = Redis({
+  url: 'redis://127.0.0.1:6379',
+});
 
 let config;
 
@@ -29,15 +33,15 @@ const updateConfigValue = async (updatedConfig) => {
   config = updatedConfig;
 };
 
-bot.use(session());
+bot.use(session({ store }));
 
-bot.command('start', UserHandlers.startHandler(sessions));
+bot.command('start', UserHandlers.startHandler(store));
 
 bot.command('add', AdminHandlers.addHandler(config, updateConfigValue));
 bot.command('remove', AdminHandlers.removeHandler(config, updateConfigValue));
 bot.command('show', AdminHandlers.showHandler(config));
 
-bot.command('new', UserHandlers.newHandler(config, sessions));
+bot.command('new', UserHandlers.newHandler(config, store));
 bot.command('help', UserHandlers.helpHandler(config));
 bot.command('chatid', UserHandlers.chatIDHandler());
 bot.command('password', UserHandlers.passwordHandler());
@@ -45,10 +49,10 @@ bot.command('image', OpenAIHandlers.imageHandler(config));
 
 bot.hears(LEXICON_EN['getIDs_btn'], UserHandlers.chatIDHandler());
 bot.hears(LEXICON_EN['password_btn'], UserHandlers.passwordHandler());
-bot.hears(LEXICON_EN['reset_btn'], UserHandlers.newHandler(config, sessions));
+bot.hears(LEXICON_EN['reset_btn'], UserHandlers.newHandler(config, store));
 
-bot.on(message('text'), OpenAIHandlers.textHandler(config, sessions));
-bot.on(message('voice'), OpenAIHandlers.voiceHandler(config, sessions));
+bot.on(message('text'), OpenAIHandlers.textHandler(config, store));
+bot.on(message('voice'), OpenAIHandlers.voiceHandler(config, store));
 
 bot.catch(async (error, ctx) => {
   if (error.name === 'TimeoutError') {
