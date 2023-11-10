@@ -7,7 +7,9 @@ First file `default.json` with code:
     "BOT_TOKEN": "Telegram token",
     "OPENAI_KEY": "OpenAI Key",
     "USERS_ID": "User IDs separated by commas without spaces",
-    "SUPER_USER": "ID"
+    "SUPER_USER": "ID",
+    "REDIS_HOST": "127.0.0.1",
+    "REDIS_PORT": "6379"
 }
 ```
 
@@ -18,7 +20,9 @@ Second file `production.json` with code:
     "BOT_TOKEN": "Telegram token",
     "OPENAI_KEY": "OpenAI Key",
     "USERS_ID": "User IDs separated by commas without spaces",
-    "SUPER_USER": "ID"
+    "SUPER_USER": "ID",
+    "REDIS_HOST": "127.0.0.1",
+    "REDIS_PORT": "6379"
 }
 ```
 
