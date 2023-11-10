@@ -1,5 +1,7 @@
 FROM node:16-alpine
 
+RUN apk update && apk add redis
+
 WORKDIR /app
 
 COPY package*.json ./
@@ -12,4 +14,4 @@ ENV PORT=3000
 
 EXPOSE $PORT
 
-CMD [ "npm", "start" ]
+CMD sh -c "redis-server --daemonize yes && npm start"

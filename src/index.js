@@ -13,10 +13,7 @@ import OpenAIHandlers from './handlers/openaiHandlers.js';
 import AdminHandlers from './handlers/adminHandlers.js';
 
 import { Redis } from '@telegraf/session/redis';
-
-const store = Redis({
-  url: 'redis://127.0.0.1:6379',
-});
+import { limit } from '@grammyjs/ratelimiter';
 
 let config;
 
@@ -26,14 +23,29 @@ if (process.env.NODE_ENV === 'production') {
   config = JSON.parse(fs.readFileSync('config/default.json', 'utf8'));
 }
 
-const bot = new Telegraf(config.BOT_TOKEN, { handlerTimeout: 180_000 });
-
+const store = Redis({
+  store: {
+    host: config.REDIS_HOST,
+    port: config.REDIS_PORT,
+  },
+});
 
 const updateConfigValue = async (updatedConfig) => {
   config = updatedConfig;
 };
 
+const requestslimit = limit({
+  timeFrame: 5000,
+  limit: 2,
+  onLimitExceeded: (ctx) => {
+    ctx?.reply(LEXICON_EN['tooManyRequests']);
+  },
+});
+
+const bot = new Telegraf(config.BOT_TOKEN, { handlerTimeout: 180_000 });
+
 bot.use(session({ store }));
+bot.use(requestslimit);
 
 bot.command('start', UserHandlers.startHandler(store));
 
