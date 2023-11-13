@@ -2,13 +2,11 @@ import {
   LEXICON_EN, getIDs,
   getHelp, printPassword,
 } from '../lexicon/lexicon_en.js';
-import { createMenuKeyboard } from '../keyboards/keyboards.js';
+import { menuKeyboard } from '../keyboards/keyboards.js';
 
 import { createInitialSession } from '../utils/createSession.js';
 import { checkAccess } from '../utils/checkAccess.js';
 import { generatePassword } from '../utils/generatePassword.js';
-
-const menuKeyboard = createMenuKeyboard();
 
 class UserHandlers {
   startHandler = (sessions) => {
@@ -42,7 +40,10 @@ class UserHandlers {
   passwordHandler = () => {
     return async (ctx) => {
       const password = await generatePassword();
-      await ctx.reply(await printPassword(password), { parse_mode: 'HTML' });
+      await ctx.reply(
+          await printPassword(password),
+          { parse_mode: 'HTML' },
+          menuKeyboard);
     };
   };
 
@@ -52,7 +53,8 @@ class UserHandlers {
 
       const sessionId = ctx.message.chat.id;
       sessions[sessionId] = createInitialSession();
-      await ctx.reply(LEXICON_EN['reset'], menuKeyboard);
+      await ctx.reply(LEXICON_EN['reset'],
+          menuKeyboard);
     };
   };
 }
