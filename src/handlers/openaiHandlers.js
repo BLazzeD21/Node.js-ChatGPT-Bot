@@ -43,7 +43,12 @@ class OpenAIHandlers {
                 .reply(
                     response.content,
                     { parse_mode: 'Markdown' },
-                    menuKeyboard);
+                    menuKeyboard)
+                .catch(async () => {
+                  await ctx.reply(response.content,
+                      { parse_mode: 'HTML' },
+                  );
+                });
           },
           ).catch(ErrorHandler.responseError(ctx, 'textHandler'),
           ).finally(async () => {
@@ -85,7 +90,16 @@ class OpenAIHandlers {
                     content: response.content,
                   });
 
-                  await ctx.reply(response.content, { parse_mode: 'Markdown' });
+                  await ctx
+                      .reply(
+                          response.content,
+                          { parse_mode: 'Markdown' },
+                          menuKeyboard)
+                      .catch(async () => {
+                        await ctx.reply(response.content,
+                            { parse_mode: 'HTML' },
+                        );
+                      });
                 })
                 .catch(ErrorHandler.responseError(ctx, 'transcription'));
           })
