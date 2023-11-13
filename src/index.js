@@ -35,8 +35,8 @@ const updateConfigValue = async (updatedConfig) => {
 };
 
 const requestslimit = limit({
-  timeFrame: 5000,
-  limit: 2,
+  timeFrame: 2500,
+  limit: 1,
   onLimitExceeded: (ctx) => {
     ctx?.reply(LEXICON_EN['tooManyRequests']);
   },
