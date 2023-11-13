@@ -7,3 +7,5 @@ export function createMenuKeyboard() {
         [LEXICON_EN['password_btn'], LEXICON_EN['getIDs_btn']]],
   ).resize();
 }
+
+export const menuKeyboard = createMenuKeyboard();

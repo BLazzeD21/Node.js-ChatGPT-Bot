@@ -4,6 +4,7 @@ import { LEXICON_EN } from '../lexicon/lexicon_en.js';
 import { openai } from '../openai.js';
 import { converter } from '../converter.js';
 
+import { menuKeyboard } from '../keyboards/keyboards.js';
 import { createInitialSession } from '../utils/createSession.js';
 import { checkAccess } from '../utils/checkAccess.js';
 
@@ -17,7 +18,9 @@ class OpenAIHandlers {
       const sessionId = ctx.message.chat.id;
       sessions[sessionId] ??= createInitialSession();
 
-      const processing = await ctx.reply(code(LEXICON_EN['processingText']));
+      const processing = await ctx.reply(
+          code(LEXICON_EN['processingText']),
+          menuKeyboard);
 
       const text = ctx.message.text;
 
@@ -36,10 +39,14 @@ class OpenAIHandlers {
               });
             }
 
-            await ctx.reply(response.content, { parse_mode: 'Markdown' });
-          })
-          .catch(ErrorHandler.responseError(ctx, 'textHandler'))
-          .finally(async () => {
+            await ctx
+                .reply(
+                    response.content,
+                    { parse_mode: 'Markdown' },
+                    menuKeyboard);
+          },
+          ).catch(ErrorHandler.responseError(ctx, 'textHandler'),
+          ).finally(async () => {
             await ctx.deleteMessage(processing.message_id);
           });
     };
@@ -52,7 +59,9 @@ class OpenAIHandlers {
       const sessionId = ctx.message.chat.id;
       sessions[sessionId] ??= createInitialSession();
 
-      const processing = await ctx.reply(code(LEXICON_EN['processingVoice']));
+      const processing = await ctx.reply(
+          code(LEXICON_EN['processingVoice']),
+          menuKeyboard);
 
       const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
       const userId = String(ctx.message.from.id);
@@ -91,7 +100,9 @@ class OpenAIHandlers {
     return async (ctx) => {
       if (await checkAccess(config, ctx)) return;
 
-      const processing = await ctx.reply(code(LEXICON_EN['processingImage']));
+      const processing = await ctx.reply(
+          code(LEXICON_EN['processingImage']),
+          menuKeyboard);
 
       const requestText = ctx.message.text.replace('/image', '').trim();
 
@@ -109,6 +120,7 @@ class OpenAIHandlers {
             if (response) {
               await ctx.replyWithPhoto(
                   { url: response }, { caption: requestText },
+                  menuKeyboard,
               );
               return;
             }
