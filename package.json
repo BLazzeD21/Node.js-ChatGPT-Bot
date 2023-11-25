@@ -32,8 +32,10 @@
     "axios": "^1.6.0",
     "config": "^3.3.9",
     "fluent-ffmpeg": "^2.1.2",
-    "openai": "^3.2.1",
+    "https-proxy-agent": "^7.0.2",
+    "openai": "^4.20.0",
     "redis": "^4.6.10",
+    "request": "^2.88.2",
     "telegraf": "^4.12.2",
     "telegraf-ratelimit": "^2.0.0"
   }
