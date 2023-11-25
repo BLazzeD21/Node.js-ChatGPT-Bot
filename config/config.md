@@ -9,7 +9,8 @@ First file `default.json` with code:
     "USERS_ID": "User IDs separated by commas without spaces",
     "SUPER_USER": "ID",
     "REDIS_HOST": "127.0.0.1",
-    "REDIS_PORT": "6379"
+    "REDIS_PORT": "6379",
+    "PROXY_URL": "http://user:password@host:port"
 }
 ```
 
@@ -22,7 +23,8 @@ Second file `production.json` with code:
     "USERS_ID": "User IDs separated by commas without spaces",
     "SUPER_USER": "ID",
     "REDIS_HOST": "127.0.0.1",
-    "REDIS_PORT": "6379"
+    "REDIS_PORT": "6379",
+    "PROXY_URL": "http://user:password@host:port"
 }
 ```
 
