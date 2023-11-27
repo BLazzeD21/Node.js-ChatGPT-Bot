@@ -21,6 +21,7 @@ class OpenAIHandlers {
       const processing = await ctx.reply(
           code(LEXICON_EN['processingText']),
           menuKeyboard);
+      ctx.sendChatAction('typing');
 
       const text = ctx.message.text;
 
@@ -67,6 +68,7 @@ class OpenAIHandlers {
       const processing = await ctx.reply(
           code(LEXICON_EN['processingVoice']),
           menuKeyboard);
+      ctx.sendChatAction('typing');
 
       const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
       const userId = String(ctx.message.from.id);
@@ -117,6 +119,7 @@ class OpenAIHandlers {
       const processing = await ctx.reply(
           code(LEXICON_EN['processingImage']),
           menuKeyboard);
+      ctx.sendChatAction('upload_photo');
 
       const requestText = ctx.message.text.replace('/image', '').trim();
 
