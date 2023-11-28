@@ -38,6 +38,7 @@ class OpenAIApi {
 
   async getImage(text, size, count) {
     const response = await this.openai.images.generate({
+      model: 'dall-e-3',
       prompt: text,
       n: count,
       size: size,
