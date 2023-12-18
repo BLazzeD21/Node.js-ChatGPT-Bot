@@ -46,6 +46,7 @@ export const LEXICON_EN = {
   waiting: 'The server timed out waiting for a response ⚠️',
   noUser: 'There is no user with this ID ⚠️',
   tooManyRequests: 'Please refrain from sending too many requests 🔔',
+  UserNotExists: 'User ID does not exist 🔒',
 };
 
 export const getIDs = async (chatId, userId) => {
