@@ -56,7 +56,7 @@ class AdminHandlers {
           const usersID = config.USERS_ID.split(',');
 
           if (!usersID.includes(requestText.toString())) {
-            ctx.reply('No');
+            ctx.reply(LEXICON_EN['UserNotExists']);
             return;
           }
           const filteredUsers = usersID
