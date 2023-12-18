@@ -16,9 +16,9 @@ export const LEXICON_EN = {
   commands: 'Custom commands set successfully',
   webhook: 'Webhook deleted successfully',
   start:
-  'Hello, welcome to an artificial intelligence chatbot\
-  that will help you with everything! 🤖\n\nYou can find\
-  the source code of the bot here:\nhttps://github.com/BLazzeD21/Node.js-ChatGPT-Bot',
+  'Hello, welcome to an artificial intelligence chatbot ' +
+  'that will help you with everything! 🤖\n\nYou can find ' +
+  'the source code of the bot here:\nhttps://github.com/BLazzeD21/Node.js-ChatGPT-Bot',
   deniedAccess: 'This functionality is not available to you ⛔️',
   processingText: 'Text accepted for processing',
   processingVoice: 'Voice message accepted for processing',
