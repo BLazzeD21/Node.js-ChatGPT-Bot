@@ -17,12 +17,17 @@ class OpenAIApi {
       apiKey: apiKey,
       httpAgent: new HttpsProxyAgent(proxyUrl),
     });
+    this.models = {
+      generateText: 'gpt-3.5-turbo-1106',
+      transcription: 'whisper-1',
+      createImages: 'dall-e-2',
+    };
   }
 
   async chat(messages) {
     const response = await this.openai.chat.completions.create({
       messages,
-      model: 'gpt-3.5-turbo',
+      model: this.models.generateText,
     });
 
     return response.choices[0].message;
@@ -31,14 +36,14 @@ class OpenAIApi {
   async transcription(filepath) {
     const response = await this.openai.audio.transcriptions.create({
       file: createReadStream(filepath),
-      model: 'whisper-1',
+      model: this.models.transcription,
     });
     return response.text;
   }
 
   async getImage(text, size, count) {
     const response = await this.openai.images.generate({
-      model: 'dall-e-3',
+      model: this.models.createImages,
       prompt: text,
       n: count,
       size: size,
