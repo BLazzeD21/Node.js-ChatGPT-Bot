@@ -72,11 +72,17 @@ bot.catch(async (error, ctx) => {
   }
 });
 
-setMenu(bot);
-deleteWebHook(bot);
+if (process.env.NODE_ENV === 'production') {
+  setMenu(bot);
+  deleteWebHook(bot);
+}
+
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
 bot.launch({ dropPendingUpdates: true })
-    .then(sendMessages(bot, await getUsersArray(config)));
+    .then(
+      process.env.NODE_ENV === 'production' ?
+      sendMessages(bot, await getUsersArray(config)) : 0,
+    );

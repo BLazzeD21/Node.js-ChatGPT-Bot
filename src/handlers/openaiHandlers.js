@@ -11,6 +11,23 @@ import { checkAccess } from '../utils/checkAccess.js';
 import ErrorHandler from './errorHandler.js';
 
 class OpenAIHandlers {
+  sendResponse = (ctx, sessions, sessionId) => {
+    return async (response) => {
+      if (response && response.content) {
+        sessions[sessionId].messages.push({
+          role: openai.roles.ASSISTANT,
+          content: response.content,
+        });
+      }
+
+      await ctx.reply(
+          response.content, { parse_mode: 'Markdown' }, menuKeyboard,
+      ).catch(
+          async () => await ctx.reply(response.content, menuKeyboard),
+      );
+    };
+  };
+
   textHandler = (config, sessions) => {
     return async (ctx) => {
       if (await checkAccess(config, ctx)) return;
@@ -21,36 +38,19 @@ class OpenAIHandlers {
       const processing = await ctx.reply(
           code(LEXICON_EN['processingText']),
           menuKeyboard);
+
       ctx.sendChatAction('typing');
 
-      const text = ctx.message.text;
+      const content = ctx.message.text;
 
       sessions[sessionId].messages.push({
         role: openai.roles.USER,
-        content: text,
+        content: content,
       });
 
       openai
           .chat(sessions[sessionId].messages)
-          .then(async (response) => {
-            if (response && response.content) {
-              sessions[sessionId].messages.push({
-                role: openai.roles.ASSISTANT,
-                content: response.content,
-              });
-            }
-
-            await ctx
-                .reply(
-                    response.content,
-                    { parse_mode: 'Markdown' },
-                    menuKeyboard)
-                .catch(async () => {
-                  await ctx.reply(response.content,
-                      { parse_mode: 'HTML' },
-                  );
-                });
-          },
+          .then(this.sendResponse(ctx, sessions, sessionId),
           ).catch(ErrorHandler.responseError(ctx, 'textHandler'),
           ).finally(async () => {
             await ctx.deleteMessage(processing.message_id);
@@ -68,6 +68,7 @@ class OpenAIHandlers {
       const processing = await ctx.reply(
           code(LEXICON_EN['processingVoice']),
           menuKeyboard);
+
       ctx.sendChatAction('typing');
 
       const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
@@ -86,23 +87,7 @@ class OpenAIHandlers {
 
             openai
                 .chat(sessions[sessionId].messages)
-                .then(async (response) => {
-                  sessions[sessionId].messages.push({
-                    role: openai.roles.ASSISTANT,
-                    content: response.content,
-                  });
-
-                  await ctx
-                      .reply(
-                          response.content,
-                          { parse_mode: 'Markdown' },
-                          menuKeyboard)
-                      .catch(async () => {
-                        await ctx.reply(response.content,
-                            { parse_mode: 'HTML' },
-                        );
-                      });
-                })
+                .then(this.sendResponse(ctx, sessions, sessionId))
                 .catch(ErrorHandler.responseError(ctx, 'transcription'));
           })
           .catch(ErrorHandler.responseError(ctx, 'voiceHandler'))
