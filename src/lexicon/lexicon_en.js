@@ -3,10 +3,6 @@ export const commands = [
   { command: 'new', description: 'Open a new session' },
   { command: 'help', description: 'Find out the bot\'s capabilities' },
   { command: 'image', description: 'Creating an image based on a text query' },
-  { command: 'chatid', description: 'Find the chat ID and your ID' },
-  { command: 'add', description: 'Adding new users' },
-  { command: 'remove', description: 'Removing users' },
-  { command: 'show', description: 'List of all elevated users' },
 ];
 
 const date = new Date();

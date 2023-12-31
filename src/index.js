@@ -55,7 +55,6 @@ bot.command('show', AdminHandlers.showHandler(config));
 
 bot.command('new', UserHandlers.newHandler(config, store));
 bot.command('help', UserHandlers.helpHandler(config));
-bot.command('chatid', UserHandlers.chatIDHandler());
 bot.command('password', UserHandlers.passwordHandler());
 bot.command('image', OpenAIHandlers.imageHandler(config));
 
