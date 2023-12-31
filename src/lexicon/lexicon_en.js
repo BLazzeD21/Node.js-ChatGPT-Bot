@@ -18,6 +18,7 @@ export const LEXICON_EN = {
   'Developer: @blazzed21\n',
   deniedAccess: 'This functionality is not available to you ⛔️',
   processingText: 'Text accepted for processing',
+  processingTranscription: 'Voice message accepted for translation into text',
   processingVoice: 'Voice message accepted for processing',
   processingImage: 'The request to generate an'+
   'image was accepted for processing',
