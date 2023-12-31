@@ -3,10 +3,6 @@ export const commands = [
   { command: 'new', description: 'Open a new session' },
   { command: 'help', description: 'Find out the bot\'s capabilities' },
   { command: 'image', description: 'Creating an image based on a text query' },
-  { command: 'chatid', description: 'Find the chat ID and your ID' },
-  { command: 'add', description: 'Adding new users' },
-  { command: 'remove', description: 'Removing users' },
-  { command: 'show', description: 'List of all elevated users' },
 ];
 
 const date = new Date();
@@ -18,9 +14,11 @@ export const LEXICON_EN = {
   start:
   'Hello, welcome to an artificial intelligence chatbot ' +
   'that will help you with everything! 🤖\n\nYou can find ' +
-  'the source code of the bot here:\nhttps://github.com/BLazzeD21/Node.js-ChatGPT-Bot',
+  'the source code of the bot here: [click](https://github.com/BLazzeD21/Node.js-ChatGPT-Bot)\n' +
+  'Developer: @blazzed21\n',
   deniedAccess: 'This functionality is not available to you ⛔️',
   processingText: 'Text accepted for processing',
+  processingTranscription: 'Voice message accepted for translation into text',
   processingVoice: 'Voice message accepted for processing',
   processingImage: 'The request to generate an'+
   'image was accepted for processing',

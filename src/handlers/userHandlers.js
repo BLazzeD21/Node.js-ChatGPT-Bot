@@ -13,7 +13,10 @@ class UserHandlers {
     return async (ctx) => {
       const sessionId = ctx.message.chat.id;
       sessions[sessionId] = createInitialSession();
-      await ctx.reply(LEXICON_EN['start'], menuKeyboard);
+      await ctx.reply(LEXICON_EN['start'],
+          { parse_mode: 'Markdown' },
+          menuKeyboard,
+      );
     };
   };
 

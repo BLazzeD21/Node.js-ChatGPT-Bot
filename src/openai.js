@@ -11,17 +11,18 @@ class OpenAIApi {
     SYSTEM: 'system',
   };
 
+  models = {
+    generateText: 'gpt-3.5-turbo-1106',
+    transcription: 'whisper-1',
+    createImages: 'dall-e-2',
+  };
+
   constructor(apiKey, proxyUrl) {
     this.openai = new OpenAI({
       maxRetries: 0,
       apiKey: apiKey,
       httpAgent: new HttpsProxyAgent(proxyUrl),
     });
-    this.models = {
-      generateText: 'gpt-3.5-turbo-1106',
-      transcription: 'whisper-1',
-      createImages: 'dall-e-2',
-    };
   }
 
   async chat(messages) {

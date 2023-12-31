@@ -1,5 +1,31 @@
-README.md
+# Logs
+logs
+*.log
+
+# Git files
+.git
+
+# Markdown
+*.md
+
+# Dependency directory
 node_modules
+
+# Configuration files
 config/default.json
 config/config.md
-/img
+
+# File with instructions required to create a container image
+Dockerfile
+
+# File with a set of instructions for building and launching
+Makefile
+
+# License
+LICENSE
+
+# Linter configuration
+.eslintrc.cjs
+
+# Folder with images for the bot
+img

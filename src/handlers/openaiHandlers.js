@@ -3,6 +3,7 @@ import { LEXICON_EN } from '../lexicon/lexicon_en.js';
 
 import { openai } from '../openai.js';
 import { converter } from '../converter.js';
+import { deleteFile } from '../utils/deleteFile.js';
 
 import { menuKeyboard } from '../keyboards/keyboards.js';
 import { createInitialSession } from '../utils/createSession.js';
@@ -65,8 +66,8 @@ class OpenAIHandlers {
       const sessionId = ctx.message.chat.id;
       sessions[sessionId] ??= createInitialSession();
 
-      const processing = await ctx.reply(
-          code(LEXICON_EN['processingVoice']),
+      const processingTranscription = await ctx.reply(
+          code(LEXICON_EN['processingTranscription']),
           menuKeyboard);
 
       ctx.sendChatAction('typing');
@@ -80,6 +81,10 @@ class OpenAIHandlers {
       openai
           .transcription(mp3Path)
           .then(async (text) => {
+            const processingVoice = await ctx.reply(
+                code(LEXICON_EN['processingVoice']),
+                menuKeyboard);
+
             sessions[sessionId].messages.push({
               role: openai.roles.USER,
               content: text,
@@ -88,11 +93,15 @@ class OpenAIHandlers {
             openai
                 .chat(sessions[sessionId].messages)
                 .then(this.sendResponse(ctx, sessions, sessionId))
-                .catch(ErrorHandler.responseError(ctx, 'transcription'));
+                .catch(ErrorHandler.responseError(ctx, 'transcription'))
+                .finally(async () => {
+                  await ctx.deleteMessage(processingVoice.message_id);
+                });
           })
           .catch(ErrorHandler.responseError(ctx, 'voiceHandler'))
           .finally(async () => {
-            await ctx.deleteMessage(processing.message_id);
+            await deleteFile(mp3Path);
+            await ctx.deleteMessage(processingTranscription.message_id);
           });
     };
   };
@@ -109,6 +118,7 @@ class OpenAIHandlers {
       const requestText = ctx.message.text.replace('/image', '').trim();
 
       if (!requestText) {
+        await ctx.deleteMessage(processing.message_id);
         await ctx.reply(LEXICON_EN['empty'], { parse_mode: 'HTML' });
         return;
       }

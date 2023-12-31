@@ -42,7 +42,7 @@ class OggConverter {
 
   async create(url, filename) {
     try {
-      const oggPath = resolve(__dirname, '../voices', `${filename}.ogg`);
+      const oggPath = resolve(__dirname, 'voices', `${filename}.ogg`);
       const response = await axios.get(url, {
         responseType: 'stream',
       });
