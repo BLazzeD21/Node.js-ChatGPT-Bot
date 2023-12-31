@@ -3,6 +3,7 @@ import { LEXICON_EN } from '../lexicon/lexicon_en.js';
 
 import { openai } from '../openai.js';
 import { converter } from '../converter.js';
+import { deleteFile } from '../utils/deleteFile.js';
 
 import { menuKeyboard } from '../keyboards/keyboards.js';
 import { createInitialSession } from '../utils/createSession.js';
@@ -84,7 +85,6 @@ class OpenAIHandlers {
               role: openai.roles.USER,
               content: text,
             });
-
             openai
                 .chat(sessions[sessionId].messages)
                 .then(this.sendResponse(ctx, sessions, sessionId))
@@ -92,6 +92,7 @@ class OpenAIHandlers {
           })
           .catch(ErrorHandler.responseError(ctx, 'voiceHandler'))
           .finally(async () => {
+            await deleteFile(mp3Path);
             await ctx.deleteMessage(processing.message_id);
           });
     };
