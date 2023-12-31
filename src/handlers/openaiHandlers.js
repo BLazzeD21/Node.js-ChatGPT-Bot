@@ -109,6 +109,7 @@ class OpenAIHandlers {
       const requestText = ctx.message.text.replace('/image', '').trim();
 
       if (!requestText) {
+        await ctx.deleteMessage(processing.message_id);
         await ctx.reply(LEXICON_EN['empty'], { parse_mode: 'HTML' });
         return;
       }
