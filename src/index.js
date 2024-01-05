@@ -14,11 +14,12 @@ import AdminHandlers from './handlers/adminHandlers.js';
 import { Redis } from '@telegraf/session/redis';
 import { limit } from '@grammyjs/ratelimiter';
 
-let config = process.env.NODE_ENV === 'production' ?
+let config =
+  process.env.NODE_ENV === 'production' ?
     JSON.parse(fs.readFileSync('config/production.json', 'utf8')) :
     JSON.parse(fs.readFileSync('config/default.json', 'utf8'));
 
-const store = new Redis({
+const redisStorage = new Redis({
   store: {
     host: config.REDIS_HOST,
     port: config.REDIS_PORT,
@@ -30,35 +31,44 @@ const updateConfigValue = async (updatedConfig) => {
 };
 
 const requestslimit = limit({
-  timeFrame: 2500,
-  limit: 1,
+  timeFrame: 60000,
+  limit: 3,
   onLimitExceeded: (ctx) => {
-    ctx?.reply(LEXICON_EN['tooManyRequests']);
+    ctx.reply(LEXICON_EN['tooManyRequests']);
   },
 });
 
 const bot = new Telegraf(config.BOT_TOKEN, { handlerTimeout: 180_000 });
 
-bot.use(session({ store }));
-bot.use(requestslimit);
+bot.use(session({ redisStorage }));
 
-bot.command('start', UserHandlers.startHandler(store));
+bot.command('start', UserHandlers.startHandler(redisStorage));
 
 bot.command('add', AdminHandlers.addHandler(config, updateConfigValue));
 bot.command('remove', AdminHandlers.removeHandler(config, updateConfigValue));
 bot.command('show', AdminHandlers.showHandler(config));
 
-bot.command('new', UserHandlers.newHandler(config, store));
+bot.command('new', UserHandlers.newHandler(config, redisStorage));
 bot.command('help', UserHandlers.helpHandler(config));
 bot.command('password', UserHandlers.passwordHandler());
-bot.command('image', OpenAIHandlers.imageHandler(config));
 
 bot.hears(LEXICON_EN['getIDs_btn'], UserHandlers.chatIDHandler());
 bot.hears(LEXICON_EN['password_btn'], UserHandlers.passwordHandler());
-bot.hears(LEXICON_EN['reset_btn'], UserHandlers.newHandler(config, store));
+bot.hears(LEXICON_EN['reset_btn'],
+    UserHandlers.newHandler(config, redisStorage));
 
-bot.on(message('text'), OpenAIHandlers.textHandler(config, store));
-bot.on(message('voice'), OpenAIHandlers.voiceHandler(config, store));
+bot.command('image',
+    requestslimit,
+    OpenAIHandlers.imageHandler(config),
+);
+bot.on(message('text'),
+    requestslimit,
+    OpenAIHandlers.textHandler(config, redisStorage),
+);
+bot.on(message('voice'),
+    requestslimit,
+    OpenAIHandlers.voiceHandler(config, redisStorage),
+);
 
 bot.catch(async (error, ctx) => {
   if (error.name === 'TimeoutError') {
@@ -71,12 +81,13 @@ if (process.env.NODE_ENV === 'production') {
   deleteWebHook(bot);
 }
 
-
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
-bot.launch({ dropPendingUpdates: true })
+bot
+    .launch({ dropPendingUpdates: true })
     .then(
-      process.env.NODE_ENV === 'production' ?
-      sendMessages(bot, await getUsersArray(config)) : 0,
+    process.env.NODE_ENV === 'production' ?
+      sendMessages(bot, await getUsersArray(config)) :
+      0,
     );

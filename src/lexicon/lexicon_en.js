@@ -43,7 +43,7 @@ export const LEXICON_EN = {
   errorSending: 'Error sending message to: ',
   waiting: 'The server timed out waiting for a response ⚠️',
   noUser: 'There is no user with this ID ⚠️',
-  tooManyRequests: 'Please refrain from sending too many requests 🔔',
+  tooManyRequests: 'API requests are only available 3 times every 60 seconds 🔔',
   UserNotExists: 'User ID does not exist 🔒',
 };
 
