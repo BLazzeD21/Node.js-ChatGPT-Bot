@@ -7,7 +7,6 @@ import { sendMessages } from './utils/sendMessages.js';
 import { LEXICON_EN } from './lexicon/lexicon_en.js';
 import { setMenu } from './keyboards/set_menu.js';
 import { deleteWebHook } from './utils/deleteWebhook.js';
-
 import UserHandlers from './handlers/userHandlers.js';
 import OpenAIHandlers from './handlers/openaiHandlers.js';
 import AdminHandlers from './handlers/adminHandlers.js';
@@ -15,15 +14,11 @@ import AdminHandlers from './handlers/adminHandlers.js';
 import { Redis } from '@telegraf/session/redis';
 import { limit } from '@grammyjs/ratelimiter';
 
-let config;
+let config = process.env.NODE_ENV === 'production' ?
+    JSON.parse(fs.readFileSync('config/production.json', 'utf8')) :
+    JSON.parse(fs.readFileSync('config/default.json', 'utf8'));
 
-if (process.env.NODE_ENV === 'production') {
-  config = JSON.parse(fs.readFileSync('config/production.json', 'utf8'));
-} else {
-  config = JSON.parse(fs.readFileSync('config/default.json', 'utf8'));
-}
-
-const store = Redis({
+const store = new Redis({
   store: {
     host: config.REDIS_HOST,
     port: config.REDIS_PORT,
