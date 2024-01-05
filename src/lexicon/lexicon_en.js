@@ -11,8 +11,8 @@ export const LEXICON_EN = {
   botStarted: `Bot has been started! 🤖\n\n${date}`,
   commands: 'Custom commands set successfully',
   webhook: 'Webhook deleted successfully',
-  start:
-  'Hello, welcome to an artificial intelligence chatbot ' +
+  folderCreated: 'Folder created successfully',
+  start: 'Hello, welcome to an artificial intelligence chatbot ' +
   'that will help you with everything! 🤖\n\nYou can find ' +
   'the source code of the bot here: [click](https://github.com/BLazzeD21/Node.js-ChatGPT-Bot)\n' +
   'Developer: @blazzed21\n',

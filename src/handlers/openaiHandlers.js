@@ -1,6 +1,7 @@
+import fs from 'fs';
 import { code } from 'telegraf/format';
-import { LEXICON_EN } from '../lexicon/lexicon_en.js';
 
+import { LEXICON_EN } from '../lexicon/lexicon_en.js';
 import { openai } from '../openai.js';
 import { converter } from '../converter.js';
 import { deleteFile } from '../utils/deleteFile.js';
@@ -71,6 +72,13 @@ class OpenAIHandlers {
           menuKeyboard);
 
       await ctx.sendChatAction('typing');
+
+      if (!fs.existsSync('build/voices')) {
+        fs.mkdir('build/voices', (error) => {
+          if (error) throw error;
+          console.log(LEXICON_EN['folderCreated']);
+        });
+      }
 
       const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
       const userId = String(ctx.message.from.id);
