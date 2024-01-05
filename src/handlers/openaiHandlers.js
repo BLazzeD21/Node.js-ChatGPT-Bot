@@ -40,7 +40,7 @@ class OpenAIHandlers {
           code(LEXICON_EN['processingText']),
           menuKeyboard);
 
-      ctx.sendChatAction('typing');
+      await ctx.sendChatAction('typing');
 
       const content = ctx.message.text;
 
@@ -70,7 +70,7 @@ class OpenAIHandlers {
           code(LEXICON_EN['processingTranscription']),
           menuKeyboard);
 
-      ctx.sendChatAction('typing');
+      await ctx.sendChatAction('typing');
 
       const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
       const userId = String(ctx.message.from.id);
@@ -113,7 +113,7 @@ class OpenAIHandlers {
       const processing = await ctx.reply(
           code(LEXICON_EN['processingImage']),
           menuKeyboard);
-      ctx.sendChatAction('upload_photo');
+      await ctx.sendChatAction('upload_photo');
 
       const requestText = ctx.message.text.replace('/image', '').trim();
 

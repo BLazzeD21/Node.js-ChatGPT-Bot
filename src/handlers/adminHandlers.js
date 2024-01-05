@@ -31,7 +31,7 @@ class AdminHandlers {
           const output =`<b>Added ID: </b><code>${requestText}</code>\n\n` +
           `${LEXICON_EN['add']}`;
 
-          ctx.reply(output, { parse_mode: 'HTML' });
+          await ctx.reply(output, { parse_mode: 'HTML' });
         } catch (e) {
           console.log(LEXICON_EN['errorSending'], requestText);
         }
@@ -56,7 +56,7 @@ class AdminHandlers {
           const usersID = config.USERS_ID.split(',');
 
           if (!usersID.includes(requestText.toString())) {
-            ctx.reply(LEXICON_EN['UserNotExists']);
+            await ctx.reply(LEXICON_EN['UserNotExists']);
             return;
           }
           const filteredUsers = usersID
@@ -78,7 +78,7 @@ class AdminHandlers {
           const output =`<b>Removed ID: </b><code>${requestText}</code>\n\n` +
           `${LEXICON_EN['remove']}`;
 
-          ctx.reply(output, { parse_mode: 'HTML' });
+          await ctx.reply(output, { parse_mode: 'HTML' });
         } catch (e) {
           console.log(LEXICON_EN['errorSending'], requestText);
         }
