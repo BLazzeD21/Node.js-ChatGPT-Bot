@@ -1,0 +1,17 @@
+{
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "rootDir": "./src",
+    "outDir": "./build",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "target": "ES6",
+    "strict": false,
+    "allowJs": true,
+    "checkJs": false,
+    "alwaysStrict": false,
+    "removeComments": true,
+  }
+}
