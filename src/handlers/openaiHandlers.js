@@ -23,7 +23,8 @@ class OpenAIHandlers {
       }
 
       await ctx.reply(
-          response.content, { parse_mode: 'Markdown' }, menuKeyboard,
+          response.content,
+          { parse_mode: 'Markdown', ...menuKeyboard },
       ).catch(
           async () => await ctx.reply(response.content, menuKeyboard),
       );
@@ -127,7 +128,9 @@ class OpenAIHandlers {
 
       if (!requestText) {
         await ctx.deleteMessage(processing.message_id);
-        await ctx.reply(LEXICON_EN['empty'], { parse_mode: 'HTML' });
+        await ctx.reply(LEXICON_EN['empty'],
+            { parse_mode: 'HTML', ...menuKeyboard },
+        );
         return;
       }
 

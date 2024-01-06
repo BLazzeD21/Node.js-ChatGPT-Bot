@@ -12,10 +12,11 @@ class UserHandlers {
   startHandler = (sessions) => {
     return async (ctx) => {
       const sessionId = ctx.message.chat.id;
+
       sessions[sessionId] = createInitialSession();
+
       await ctx.reply(LEXICON_EN['start'],
-          { parse_mode: 'Markdown' },
-          menuKeyboard,
+          { parse_mode: 'Markdown', ...menuKeyboard },
       );
     };
   };
@@ -23,7 +24,8 @@ class UserHandlers {
   helpHandler = (config) => {
     return async (ctx) => {
       if (await checkAccess(config, ctx)) return;
-      await ctx.reply(await getHelp(), menuKeyboard);
+
+      await ctx.reply(getHelp(), menuKeyboard);
     };
   };
 
@@ -33,9 +35,8 @@ class UserHandlers {
       const chatId = ctx.message.chat.id;
 
       await ctx.reply(
-          await getIDs(chatId, userId),
-          { parse_mode: 'HTML' },
-          menuKeyboard,
+          getIDs(chatId, userId),
+          { parse_mode: 'HTML', ...menuKeyboard },
       );
     };
   };
@@ -43,10 +44,11 @@ class UserHandlers {
   passwordHandler = () => {
     return async (ctx) => {
       const password = await generatePassword();
+
       await ctx.reply(
-          await printPassword(password),
-          { parse_mode: 'HTML' },
-          menuKeyboard);
+          printPassword(password),
+          { parse_mode: 'HTML', ...menuKeyboard },
+      );
     };
   };
 

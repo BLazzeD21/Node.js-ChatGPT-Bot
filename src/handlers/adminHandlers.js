@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { LEXICON_EN } from '../lexicon/lexicon_en.js';
 import { getUsersArray } from '../utils/checkAccess.js';
+import { menuKeyboard } from '../keyboards/keyboards.js';
 
 class AdminHandlers {
   addHandler = (config, callback) => {
@@ -12,7 +13,9 @@ class AdminHandlers {
               .trim());
 
           if (!requestText) {
-            await ctx.reply(LEXICON_EN['emptyAdd'], { parse_mode: 'HTML' });
+            await ctx.reply(LEXICON_EN['emptyAdd'],
+                { parse_mode: 'HTML', ...menuKeyboard },
+            );
             return;
           }
 
@@ -31,7 +34,7 @@ class AdminHandlers {
           const output =`<b>Added ID: </b><code>${requestText}</code>\n\n` +
           `${LEXICON_EN['add']}`;
 
-          await ctx.reply(output, { parse_mode: 'HTML' });
+          await ctx.reply(output, { parse_mode: 'HTML', ...menuKeyboard });
         } catch (e) {
           console.log(LEXICON_EN['errorSending'], requestText);
         }
@@ -50,7 +53,9 @@ class AdminHandlers {
               .trim());
 
           if (!requestText) {
-            await ctx.reply(LEXICON_EN['removeAdd'], { parse_mode: 'HTML' });
+            await ctx.reply(LEXICON_EN['removeAdd'],
+                { parse_mode: 'HTML', ...menuKeyboard },
+            );
             return;
           }
           const usersID = config.USERS_ID.split(',');
@@ -78,7 +83,7 @@ class AdminHandlers {
           const output =`<b>Removed ID: </b><code>${requestText}</code>\n\n` +
           `${LEXICON_EN['remove']}`;
 
-          await ctx.reply(output, { parse_mode: 'HTML' });
+          await ctx.reply(output, { parse_mode: 'HTML', ...menuKeyboard });
         } catch (e) {
           console.log(LEXICON_EN['errorSending'], requestText);
         }
@@ -112,7 +117,7 @@ class AdminHandlers {
               output += `👤 <code>${id}</code>\n`;
             });
 
-        await ctx.reply(output, { parse_mode: 'HTML' });
+        await ctx.reply(output, { parse_mode: 'HTML', ...menuKeyboard });
 
         await callback(config);
       } else {
