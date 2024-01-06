@@ -1,6 +1,6 @@
 {
   "name": "node.js-chatgpt-bot",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "СhatGPT bot for telegram written on node.js",
   "main": "index.js",
   "type": "module",
