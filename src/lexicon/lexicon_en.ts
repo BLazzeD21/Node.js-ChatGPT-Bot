@@ -1,11 +1,16 @@
-export const commands = [
+interface Command {
+  command: string;
+  description: string;
+}
+
+export const commands: Command[] = [
   { command: 'start', description: 'Update the bot' },
   { command: 'new', description: 'Open a new session' },
   { command: 'help', description: 'Find out the bot\'s capabilities' },
   { command: 'image', description: 'Creating an image based on a text query' },
 ];
 
-const date = new Date();
+const date: Date = new Date();
 
 export const LEXICON_EN = {
   botStarted: `Bot has been started! 🤖\n\n${date}`,
@@ -47,13 +52,13 @@ export const LEXICON_EN = {
   UserNotExists: 'User ID does not exist 🔒',
 };
 
-export const getIDs = async (chatId, userId) => {
-  return `Your ID: <code>${userId}</code>\n`+
-  `This chat ID: <code>${chatId}</code>`;
+export const getIDs = (chatId: number, userId: number) => {
+  return `Your ID: <code>${userId.toString()}</code>\n`+
+  `This chat ID: <code>${chatId.toString()}</code>`;
 };
 
-export const getHelp = async () => {
-  let helpMessage = 'Commands available in the bot:\n';
+export const getHelp = () => {
+  let helpMessage: string = 'Commands available in the bot:\n';
 
   for (const key in commands) {
     helpMessage += `/${commands[key]['command']}` +
@@ -64,14 +69,7 @@ export const getHelp = async () => {
   return helpMessage;
 };
 
-export const messageSent = async (recipientId) => {
-  return `Message sent to user ID: ${recipientId}`;
-};
 
-export const errorWhileSending = async (error) => {
-  return `Error sending message: ${error}`;
-};
-
-export const printPassword = async (password) => {
+export const printPassword = (password: string) => {
   return `<b>Generated password</b>:\n<code>${password}</code>`;
 };
