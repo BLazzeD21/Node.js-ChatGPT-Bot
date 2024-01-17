@@ -13,5 +13,6 @@
     "checkJs": false,
     "alwaysStrict": false,
     "removeComments": true,
+    "noEmitOnError": true
   }
 }
