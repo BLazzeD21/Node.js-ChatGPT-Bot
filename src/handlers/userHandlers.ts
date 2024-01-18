@@ -7,13 +7,14 @@ import { menuKeyboard } from '../keyboards/keyboards.js';
 import { createInitialSession } from '../utils/createSession.js';
 import { checkAccess } from '../utils/checkAccess.js';
 import { generatePassword } from '../utils/generatePassword.js';
+import { Context, SessionStore } from 'telegraf';
 
 class UserHandlers {
-  startHandler = (sessions) => {
-    return async (ctx) => {
-      const sessionId = ctx.message.chat.id;
+  startHandler = (redisStorage: SessionStore<any>) => {
+    return async (ctx: Context) => {
+      const sessionId: number = ctx.message.chat.id;
 
-      sessions[sessionId] = createInitialSession();
+      redisStorage[sessionId] = createInitialSession();
 
       await ctx.reply(LEXICON_EN['start'],
           { parse_mode: 'Markdown', ...menuKeyboard },
@@ -21,8 +22,8 @@ class UserHandlers {
     };
   };
 
-  helpHandler = (config) => {
-    return async (ctx) => {
+  helpHandler = (config: Config) => {
+    return async (ctx: Context) => {
       if (await checkAccess(config, ctx)) return;
 
       await ctx.reply(getHelp(), menuKeyboard);
@@ -30,9 +31,9 @@ class UserHandlers {
   };
 
   chatIDHandler = () => {
-    return async (ctx) => {
-      const userId = ctx.from.id;
-      const chatId = ctx.message.chat.id;
+    return async (ctx: Context) => {
+      const userId: number = ctx.from.id;
+      const chatId: number = ctx.message.chat.id;
 
       await ctx.reply(
           getIDs(chatId, userId),
@@ -42,7 +43,7 @@ class UserHandlers {
   };
 
   passwordHandler = () => {
-    return async (ctx) => {
+    return async (ctx: Context) => {
       const password = await generatePassword();
 
       await ctx.reply(
@@ -52,12 +53,13 @@ class UserHandlers {
     };
   };
 
-  newHandler = (config, sessions) => {
-    return async (ctx) => {
+  newHandler = (config: Config, redisStorage: SessionStore<any>) => {
+    return async (ctx: Context) => {
       if (await checkAccess(config, ctx)) return;
 
-      const sessionId = ctx.message.chat.id;
-      sessions[sessionId] = createInitialSession();
+      const sessionId: number = ctx.message.chat.id;
+      
+      redisStorage[sessionId] = createInitialSession();
       await ctx.reply(LEXICON_EN['reset'],
           menuKeyboard);
     };
