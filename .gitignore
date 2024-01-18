@@ -133,3 +133,6 @@ dist
 # Configuration files
 config/default.json
 config/production.json
+
+# Compiled version of project
+build

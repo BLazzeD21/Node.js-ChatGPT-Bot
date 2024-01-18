@@ -1,7 +1,11 @@
+import { Context, SessionStore } from 'telegraf';
+import fs from 'fs';
 import { code } from 'telegraf/format';
-import { LEXICON_EN } from '../lexicon/lexicon_en.js';
+import { OpenAI } from 'openai';
 
+import { LEXICON_EN } from '../lexicon/lexicon_en.js';
 import { openai } from '../openai.js';
+
 import { converter } from '../converter.js';
 import { deleteFile } from '../utils/deleteFile.js';
 
@@ -12,87 +16,100 @@ import { checkAccess } from '../utils/checkAccess.js';
 import ErrorHandler from './errorHandler.js';
 
 class OpenAIHandlers {
-  sendResponse = (ctx, sessions, sessionId) => {
-    return async (response) => {
+  private sendResponse = (
+      ctx: Context,
+      redisStorage: SessionStore<any>,
+      userId: string,
+  ) => {
+    return async (response: OpenAI.Chat.Completions.ChatCompletionMessage) => {
       if (response && response.content) {
-        sessions[sessionId].messages.push({
+        redisStorage[userId].messages.push({
           role: openai.roles.ASSISTANT,
           content: response.content,
         });
       }
 
-      await ctx.reply(
-          response.content, { parse_mode: 'Markdown' }, menuKeyboard,
-      ).catch(
-          async () => await ctx.reply(response.content, menuKeyboard),
-      );
+      await ctx
+          .reply(response.content, { parse_mode: 'Markdown', ...menuKeyboard })
+          .catch(async () => await ctx.reply(response.content, menuKeyboard));
     };
   };
 
-  textHandler = (config, sessions) => {
-    return async (ctx) => {
+  public textHandler = (config: Config, redisStorage: SessionStore<any>) => {
+    return async (ctx: Context) => {
       if (await checkAccess(config, ctx)) return;
 
-      const sessionId = ctx.message.chat.id;
-      sessions[sessionId] ??= createInitialSession();
+      const userId: string = ctx.message.chat.id.toString();
+      redisStorage[userId] ??= createInitialSession();
 
       const processing = await ctx.reply(
           code(LEXICON_EN['processingText']),
-          menuKeyboard);
+          menuKeyboard,
+      );
 
-      ctx.sendChatAction('typing');
+      await ctx.sendChatAction('typing');
 
+      if (!(ctx.message && 'text' in ctx.message)) return;
       const content = ctx.message.text;
 
-      sessions[sessionId].messages.push({
+      redisStorage[userId].messages.push({
         role: openai.roles.USER,
         content: content,
       });
 
       openai
-          .chat(sessions[sessionId].messages)
-          .then(this.sendResponse(ctx, sessions, sessionId),
-          ).catch(ErrorHandler.responseError(ctx, 'textHandler'),
-          ).finally(async () => {
+          .chat(redisStorage[userId].messages)
+          .then(this.sendResponse(ctx, redisStorage, userId))
+          .catch(ErrorHandler.responseError(ctx, 'textHandler'))
+          .finally(async () => {
             await ctx.deleteMessage(processing.message_id);
           });
     };
   };
 
-  voiceHandler = (config, sessions) => {
-    return async (ctx) => {
+  public voiceHandler = (config: Config, redisStorage: SessionStore<any>) => {
+    return async (ctx: Context) => {
       if (await checkAccess(config, ctx)) return;
 
-      const sessionId = ctx.message.chat.id;
-      sessions[sessionId] ??= createInitialSession();
+      const userId: string = ctx.message.chat.id.toString();
+      redisStorage[userId] ??= createInitialSession();
 
       const processingTranscription = await ctx.reply(
           code(LEXICON_EN['processingTranscription']),
-          menuKeyboard);
+          menuKeyboard,
+      );
 
-      ctx.sendChatAction('typing');
+      await ctx.sendChatAction('typing');
 
+      if (!fs.existsSync('build/voices')) {
+        fs.mkdir('build/voices', (error) => {
+          if (error) throw error;
+          console.log(LEXICON_EN['folderCreated']);
+        });
+      }
+
+      if (!(ctx.message && 'voice' in ctx.message)) return;
       const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
-      const userId = String(ctx.message.from.id);
 
       const oggPath = await converter.create(link.href, userId);
-      const mp3Path = await converter.toMp3(oggPath, userId);
+      const mp3Path = await converter.toMp3(oggPath.toString(), userId);
 
       openai
-          .transcription(mp3Path)
+          .transcription(mp3Path.toString())
           .then(async (text) => {
             const processingVoice = await ctx.reply(
                 code(LEXICON_EN['processingVoice']),
-                menuKeyboard);
+                menuKeyboard,
+            );
 
-            sessions[sessionId].messages.push({
+            redisStorage[userId].messages.push({
               role: openai.roles.USER,
               content: text,
             });
 
             openai
-                .chat(sessions[sessionId].messages)
-                .then(this.sendResponse(ctx, sessions, sessionId))
+                .chat(redisStorage[userId].messages)
+                .then(this.sendResponse(ctx, redisStorage, userId))
                 .catch(ErrorHandler.responseError(ctx, 'transcription'))
                 .finally(async () => {
                   await ctx.deleteMessage(processingVoice.message_id);
@@ -100,26 +117,31 @@ class OpenAIHandlers {
           })
           .catch(ErrorHandler.responseError(ctx, 'voiceHandler'))
           .finally(async () => {
-            await deleteFile(mp3Path);
+            await deleteFile(mp3Path.toString());
             await ctx.deleteMessage(processingTranscription.message_id);
           });
     };
   };
 
-  imageHandler = (config) => {
-    return async (ctx) => {
+  public imageHandler = (config: Config) => {
+    return async (ctx: Context) => {
       if (await checkAccess(config, ctx)) return;
 
       const processing = await ctx.reply(
           code(LEXICON_EN['processingImage']),
-          menuKeyboard);
-      ctx.sendChatAction('upload_photo');
+          menuKeyboard,
+      );
+      await ctx.sendChatAction('upload_photo');
 
+      if (!(ctx.message && 'text' in ctx.message)) return;
       const requestText = ctx.message.text.replace('/image', '').trim();
 
       if (!requestText) {
         await ctx.deleteMessage(processing.message_id);
-        await ctx.reply(LEXICON_EN['empty'], { parse_mode: 'HTML' });
+        await ctx.reply(LEXICON_EN['empty'], {
+          parse_mode: 'HTML',
+          ...menuKeyboard,
+        });
         return;
       }
 
@@ -131,8 +153,8 @@ class OpenAIHandlers {
           .then(async (response) => {
             if (response) {
               await ctx.replyWithPhoto(
-                  { url: response }, { caption: requestText },
-                  menuKeyboard,
+                  { url: response },
+                  { caption: requestText, ...menuKeyboard },
               );
               return;
             }

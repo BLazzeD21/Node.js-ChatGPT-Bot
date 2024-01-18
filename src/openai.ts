@@ -1,23 +1,24 @@
 import { OpenAI } from 'openai';
-
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import config from 'config';
 import { createReadStream } from 'fs';
 
 class OpenAIApi {
-  roles = {
+  private openai: OpenAI;
+
+  public roles = {
     ASSISTANT: 'assistant',
     USER: 'user',
     SYSTEM: 'system',
   };
 
-  models = {
+  public models = {
     generateText: 'gpt-3.5-turbo-1106',
     transcription: 'whisper-1',
     createImages: 'dall-e-2',
   };
 
-  constructor(apiKey, proxyUrl) {
+  constructor(apiKey: string, proxyUrl: string) {
     this.openai = new OpenAI({
       maxRetries: 0,
       apiKey: apiKey,
@@ -25,7 +26,7 @@ class OpenAIApi {
     });
   }
 
-  async chat(messages) {
+  public async chat(messages: Messages[]) {
     const response = await this.openai.chat.completions.create({
       messages,
       model: this.models.generateText,
@@ -34,7 +35,7 @@ class OpenAIApi {
     return response.choices[0].message;
   }
 
-  async transcription(filepath) {
+  public async transcription(filepath: string) {
     const response = await this.openai.audio.transcriptions.create({
       file: createReadStream(filepath),
       model: this.models.transcription,
@@ -42,7 +43,11 @@ class OpenAIApi {
     return response.text;
   }
 
-  async getImage(text, size, count) {
+  public async getImage(
+      text: string,
+      size: '1024x1024' | '512x512',
+      count: number,
+  ) {
     const response = await this.openai.images.generate({
       model: this.models.createImages,
       prompt: text,
@@ -57,6 +62,6 @@ class OpenAIApi {
 }
 
 export const openai = new OpenAIApi(
-    config.get('OPENAI_KEY'),
-    config.get('PROXY_URL'),
+  config.get('OPENAI_KEY'),
+  config.get('PROXY_URL'),
 );

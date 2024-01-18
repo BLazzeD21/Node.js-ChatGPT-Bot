@@ -8,14 +8,14 @@ import { fileURLToPath } from 'url';
 
 import { deleteFile } from './utils/deleteFile.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname: string = dirname(fileURLToPath(import.meta.url));
 
 class OggConverter {
   constructor() {
     ffmpeg.setFfmpegPath(installer.path);
   }
 
-  toMp3(input, output) {
+  public async toMp3(input: string, output: string) {
     try {
       const outputPath = resolve(
           __dirname,
@@ -32,7 +32,7 @@ class OggConverter {
               deleteFile(input);
               resolve(outputPath);
             })
-            .on('error', (err) => reject(err.message))
+            .on('error', (error: Error) => reject(error.message))
             .run();
       });
     } catch (error) {
@@ -40,9 +40,9 @@ class OggConverter {
     }
   }
 
-  async create(url, filename) {
+  public async create(url: string, filename: string) {
     try {
-      const oggPath = resolve(__dirname, 'voices', `${filename}.ogg`);
+      const oggPath: string = resolve(__dirname, 'voices', `${filename}.ogg`);
       const response = await axios.get(url, {
         responseType: 'stream',
       });

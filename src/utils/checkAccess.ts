@@ -1,19 +1,17 @@
 import { LEXICON_EN } from '../lexicon/lexicon_en.js';
+import { Context } from 'telegraf';
 
-export async function getUsersArray(config) {
-  let usersArray = config
-      .USERS_ID
-      .split(',')
-      .map((id) => parseInt(id));
+export async function getUsersArray(config: Config) {
+  let usersArray = config.USERS_ID.split(',').map((id: string) => parseInt(id));
 
   if (usersArray.includes(NaN)) {
-    usersArray = [config.SUPER_USER];
+    usersArray = [parseInt(config.SUPER_USER)];
   }
 
   return usersArray;
 }
 
-export async function checkAccess(config, ctx) {
+export async function checkAccess(config: Config, ctx: Context) {
   const allowedUserId = await getUsersArray(config);
 
   if (!allowedUserId.includes(ctx.from.id)) {
