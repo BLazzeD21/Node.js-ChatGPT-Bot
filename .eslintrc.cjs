@@ -3,24 +3,18 @@ module.exports = {
     'browser': true,
     'es2021': true,
   },
-  'extends': 'google',
-  'overrides': [
-    {
-      'env': {
-        'node': true,
-      },
-      'files': [
-        '.eslintrc.{js,cjs}',
-      ],
-      'parserOptions': {
-        'sourceType': 'script',
-      },
-    },
+  'extends': [
+    'google',
+    'plugin:@typescript-eslint/recommended',
   ],
+  'parser': '@typescript-eslint/parser',
   'parserOptions': {
-    'ecmaVersion': 'latest',
+    'ecmaVersion': 2021,
     'sourceType': 'module',
   },
+  'plugins': [
+    '@typescript-eslint',
+  ],
   'rules': {
     'no-unused-vars': 1,
     'import/extensions': 0,
@@ -30,5 +24,9 @@ module.exports = {
     'quotes': ['error', 'single'],
     'no-multi-str': 0,
     'guard-for-in': 0,
+    'new-cap': 0,
+    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/ban-types': 0,
+    '@typescript-eslint/no-unused-vars': 'warning',
   },
 };
