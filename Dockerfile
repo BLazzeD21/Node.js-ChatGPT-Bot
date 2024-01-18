@@ -14,4 +14,4 @@ ENV PORT=3000
 
 EXPOSE $PORT
 
-CMD sh -c "redis-server --daemonize yes && npm start"
+CMD sh -c "redis-server --daemonize yes && npm run build && npm start"
