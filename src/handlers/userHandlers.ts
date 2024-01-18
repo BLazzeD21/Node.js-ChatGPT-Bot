@@ -10,7 +10,7 @@ import { generatePassword } from '../utils/generatePassword.js';
 import { Context, SessionStore } from 'telegraf';
 
 class UserHandlers {
-  startHandler = (redisStorage: SessionStore<any>) => {
+  public startHandler = (redisStorage: SessionStore<any>) => {
     return async (ctx: Context) => {
       const sessionId: number = ctx.message.chat.id;
 
@@ -22,7 +22,7 @@ class UserHandlers {
     };
   };
 
-  helpHandler = (config: Config) => {
+  public helpHandler = (config: Config) => {
     return async (ctx: Context) => {
       if (await checkAccess(config, ctx)) return;
 
@@ -30,10 +30,10 @@ class UserHandlers {
     };
   };
 
-  chatIDHandler = () => {
+  public chatIDHandler = () => {
     return async (ctx: Context) => {
       const userId: number = ctx.from.id;
-      const chatId: number = ctx.message.chat.id;
+      const chatId: number = ctx.chat.id;
 
       await ctx.reply(
           getIDs(chatId, userId),
@@ -42,7 +42,7 @@ class UserHandlers {
     };
   };
 
-  passwordHandler = () => {
+  public passwordHandler = () => {
     return async (ctx: Context) => {
       const password = await generatePassword();
 
@@ -53,12 +53,12 @@ class UserHandlers {
     };
   };
 
-  newHandler = (config: Config, redisStorage: SessionStore<any>) => {
+  public newHandler = (config: Config, redisStorage: SessionStore<any>) => {
     return async (ctx: Context) => {
       if (await checkAccess(config, ctx)) return;
 
       const sessionId: number = ctx.message.chat.id;
-      
+
       redisStorage[sessionId] = createInitialSession();
       await ctx.reply(LEXICON_EN['reset'],
           menuKeyboard);

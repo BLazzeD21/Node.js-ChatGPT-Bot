@@ -1,4 +1,4 @@
-import { unlink } from "fs/promises";
+import { unlink } from 'fs/promises';
 
 export async function deleteFile(path: string) {
   try {

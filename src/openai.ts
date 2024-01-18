@@ -1,21 +1,21 @@
-import { OpenAI } from "openai";
-import { HttpsProxyAgent } from "https-proxy-agent";
-import config from "config";
-import { createReadStream } from "fs";
+import { OpenAI } from 'openai';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+import config from 'config';
+import { createReadStream } from 'fs';
 
 class OpenAIApi {
   private openai: OpenAI;
 
   public roles = {
-    ASSISTANT: "assistant",
-    USER: "user",
-    SYSTEM: "system",
+    ASSISTANT: 'assistant',
+    USER: 'user',
+    SYSTEM: 'system',
   };
 
   public models = {
-    generateText: "gpt-3.5-turbo-1106",
-    transcription: "whisper-1",
-    createImages: "dall-e-2",
+    generateText: 'gpt-3.5-turbo-1106',
+    transcription: 'whisper-1',
+    createImages: 'dall-e-2',
   };
 
   constructor(apiKey: string, proxyUrl: string) {
@@ -43,7 +43,11 @@ class OpenAIApi {
     return response.text;
   }
 
-  public async getImage(text: string, size: "1024x1024" | "512x512", count: number) {
+  public async getImage(
+      text: string,
+      size: '1024x1024' | '512x512',
+      count: number,
+  ) {
     const response = await this.openai.images.generate({
       model: this.models.createImages,
       prompt: text,
@@ -57,7 +61,7 @@ class OpenAIApi {
   }
 }
 
-export const openai: OpenAIApi = new OpenAIApi(
-  config.get("OPENAI_KEY"),
-  config.get("PROXY_URL")
+export const openai = new OpenAIApi(
+  config.get('OPENAI_KEY'),
+  config.get('PROXY_URL'),
 );
